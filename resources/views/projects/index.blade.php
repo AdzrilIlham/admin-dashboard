@@ -235,8 +235,12 @@
                             </td>
                             <td class="text-center">
                                 @if($project->link)
-                                    <a href="{{ $project->link }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Kunjungi Project">
-                                        <i class="fas fa-external-link-alt"></i>
+                                    <a href="{{ $project->link }}" 
+                                       target="_blank" 
+                                       class="btn btn-sm btn-outline-primary" 
+                                       title="Kunjungi Project"
+                                       rel="noopener noreferrer">
+                                        <i class="fas fa-external-link-alt me-1"></i>Kunjungi
                                     </a>
                                 @else
                                     <span class="text-muted">-</span>
@@ -258,29 +262,35 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                <button type="button" 
-                                        class="btn btn-sm btn-warning me-1 edit-project-btn" 
-                                        data-id="{{ $project->id }}"
-                                        data-title="{{ $project->title }}"
-                                        data-description="{{ $project->description }}"
-                                        data-status="{{ $project->status }}"
-                                        data-link="{{ $project->link }}"
-                                        data-image="{{ $project->image }}"
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#editProjectModal"
-                                        title="Edit project">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <form action="{{ route('projects.destroy', $project) }}" 
+                                <div class="btn-group" role="group">
+                                    <button type="button" 
+                                            class="btn btn-sm btn-warning edit-project-btn" 
+                                            data-id="{{ $project->id }}"
+                                            data-title="{{ $project->title }}"
+                                            data-description="{{ $project->description }}"
+                                            data-status="{{ $project->status }}"
+                                            data-link="{{ $project->link }}"
+                                            data-image="{{ $project->image }}"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editProjectModal"
+                                            title="Edit project">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger delete-project-btn" 
+                                            data-id="{{ $project->id }}"
+                                            data-title="{{ $project->title }}"
+                                            title="Hapus project">
+                                        <i class="fas fa-trash"></i> Hapus
+                                    </button>
+                                </div>
+                                
+                                <form id="delete-form-{{ $project->id }}" 
+                                      action="{{ route('projects.destroy', $project) }}" 
                                       method="POST" 
-                                      class="d-inline delete-form">
+                                      class="d-none">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" 
-                                            class="btn btn-sm btn-danger" 
-                                            title="Hapus project">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
                                 </form>
                             </td>
                         </tr>
@@ -334,6 +344,9 @@
     .badge {
         font-size: 0.85rem;
         padding: 0.4em 0.6em;
+    }
+    .btn-group {
+        gap: 5px;
     }
 </style>
 @endpush
@@ -410,22 +423,24 @@
         });
     });
 
+    // Handle delete button click
+    document.querySelectorAll('.delete-project-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const title = this.dataset.title;
+            
+            // Show confirmation using SweetAlert2 or native confirm
+            if (confirm(`Apakah Anda yakin ingin menghapus project "${title}"?\n\nTindakan ini tidak dapat dibatalkan.`)) {
+                document.getElementById(`delete-form-${id}`).submit();
+            }
+        });
+    });
+
     // Show image in modal
     function showImageModal(imageSrc, imageTitle) {
         document.getElementById('modalImage').src = imageSrc;
         document.getElementById('imageModalLabel').textContent = imageTitle;
     }
-
-    // Confirm delete
-    document.querySelectorAll('.delete-form').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (confirm('Apakah Anda yakin ingin menghapus project ini? Tindakan ini tidak dapat dibatalkan.')) {
-                this.submit();
-            }
-        });
-    });
 
     // Re-open modal if there are validation errors
     @if($errors->any())

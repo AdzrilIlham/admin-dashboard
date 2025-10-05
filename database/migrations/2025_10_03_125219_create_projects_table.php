@@ -6,26 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-{
-    Schema::create('projects', function (Blueprint $table) {
-        $table->id();
-        $table->string('title');          // judul project
-        $table->text('description');      // deskripsi project
-        $table->string('image')->nullable(); // untuk upload gambar
-        $table->string('link')->nullable();  // link project
-        $table->timestamps();
-    });
-}
+    public function up()
+    {
+        // Drop tabel lama
+        Schema::dropIfExists('projects');
+        
+        // Buat ulang dengan constraint yang benar
+        Schema::create('projects', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->text('description');
+            $table->string('image')->nullable();
+            $table->string('link')->nullable();
+            $table->enum('status', ['ongoing', 'completed', 'paused']); // ← Ini yang penting
+            $table->timestamps();
+        });
+    }
 
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('projects');
     }

@@ -12,69 +12,121 @@
     <!-- SB Admin 2 CSS -->
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
-    <!-- Bootstrap Icons (untuk sidebar) -->
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
-        /* Fix untuk sidebar fixed dan content layout */
-        #wrapper {
-            display: flex;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        #sidebar {
-            width: 250px;
-            min-height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            transition: all 0.3s ease;
+        body {
+            overflow-x: hidden;
         }
 
-        /* Sidebar collapsed - sembunyi ke kiri */
-        #sidebar.collapsed {
-            left: -250px;
-        }
-
-        #content-wrapper {
-            flex: 1;
-            margin-left: 250px;
-            min-height: 100vh;
-            transition: margin-left 0.3s ease;
-        }
-
-        /* Content full width saat sidebar collapsed */
-        #sidebar.collapsed ~ #content-wrapper {
-            margin-left: 0;
-        }
-
-        /* Toggle button untuk mobile/desktop */
+        /* Sidebar Toggle Button - Hamburger Menu dengan Lingkaran */
         .sidebar-toggle {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            z-index: 1100;
-            background: #4e73df;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        #sidebar:not(.collapsed) ~ * .sidebar-toggle {
-            left: 265px;
+            position: fixed !important;
+            top: 20px !important;
+            left: 250px !important;
+            z-index: 10001 !important;
+            background: #4e73df !important;
+            border: none !important;
+            color: white !important;
+            width: 45px !important;
+            height: 45px !important;
+            border-radius: 50% !important;
+            cursor: pointer !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+            transition: all 0.3s ease !important;
+            pointer-events: auto !important;
         }
 
         .sidebar-toggle:hover {
-            background: #2e59d9;
+            background: #2e59d9 !important;
+            transform: scale(1.05) !important;
         }
 
-        /* Overlay untuk mobile */
+        .sidebar-toggle:active {
+            transform: scale(0.95) !important;
+        }
+
+        .sidebar-toggle i {
+            font-size: 20px !important;
+            font-weight: 600 !important;
+        }
+
+        /* Hamburger Icon - Garis Tiga */
+        .hamburger-icon {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 22px;
+            height: 16px;
+        }
+
+        .hamburger-icon span {
+            display: block;
+            width: 100%;
+            height: 2.5px;
+            background-color: white;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* Sembunyikan toggle button bawaan SB Admin 2 di sidebar dan topbar */
+        .sidebar #sidebarToggle,
+        .sidebar .sidebar-brand .sidebar-brand-icon button,
+        .sidebar .nav-item button[data-toggle],
+        #sidebarToggleTop,
+        .topbar #sidebarToggleTop,
+        .sidebar-heading button,
+        .sidebar .sidebar-brand button,
+        .sidebar-brand-icon button,
+        .sidebar button[data-toggle="collapse"],
+        .sidebar .rounded-circle,
+        .sidebar .btn-link {
+            display: none !important;
+        }
+        
+        /* Sembunyikan elemen dengan garis tiga dan lingkaran putih di sidebar */
+        .sidebar .fa-bars,
+        .sidebar .fas.fa-bars,
+        .sidebar i.fa-bars {
+            display: none !important;
+        }
+
+        /* Sidebar Base Styles - Override SB Admin 2 */
+        .sidebar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 14rem !important;
+            height: 100vh !important;
+            z-index: 1000 !important;
+            transition: transform 0.3s ease-in-out !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+        }
+
+        /* Content Wrapper */
+        #content-wrapper {
+            width: 100% !important;
+            margin-left: 14rem !important;
+            transition: margin-left 0.3s ease-in-out !important;
+            min-height: 100vh !important;
+        }
+
+        /* Overlay untuk Mobile */
         .sidebar-overlay {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -82,47 +134,112 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
             z-index: 999;
+            display: none;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
 
         .sidebar-overlay.active {
-            display: block;
-            opacity: 1;
+            display: block !important;
+            opacity: 1 !important;
         }
 
-        /* Responsive untuk mobile */
-        @media (max-width: 768px) {
-            #sidebar {
-                left: -250px;
-            }
+        /* Sidebar Hidden State - Desktop */
+        body.sidebar-hidden .sidebar {
+            transform: translateX(-100%) !important;
+        }
 
-            #sidebar.show {
-                left: 0;
+        body.sidebar-hidden #content-wrapper {
+            margin-left: 0 !important;
+        }
+
+        body.sidebar-hidden .sidebar-toggle {
+            left: 20px !important;
+        }
+
+        /* Sidebar Visible State - Desktop */
+        body:not(.sidebar-hidden) .sidebar {
+            transform: translateX(0) !important;
+        }
+
+        body:not(.sidebar-hidden) .sidebar-toggle {
+            left: 250px !important;
+            transition: left 0.3s ease !important;
+            z-index: 10001 !important;
+        }
+        
+        /* Pastikan button selalu di atas sidebar */
+        .sidebar-toggle {
+            z-index: 10001 !important;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 767px) {
+            /* Sidebar default hidden di mobile */
+            .sidebar {
+                transform: translateX(-100%) !important;
             }
 
             #content-wrapper {
-                margin-left: 0;
+                margin-left: 0 !important;
             }
 
+            /* Sidebar visible di mobile */
+            body.sidebar-visible .sidebar {
+                transform: translateX(0) !important;
+            }
+
+            body:not(.sidebar-visible) .sidebar {
+                transform: translateX(-100%) !important;
+            }
+
+            /* Button selalu di kiri di mobile */
             .sidebar-toggle {
-                left: 15px !important;
+                left: 20px !important;
+            }
+
+            body.sidebar-visible .sidebar-toggle {
+                left: 20px !important;
             }
         }
 
-        /* Pastikan container-fluid tidak tertutup */
+        /* Container & General Styles */
         .container-fluid {
             padding: 1.5rem;
         }
 
-        /* Fix untuk tabel responsive */
         .table-responsive {
             overflow-x: auto;
         }
 
-        /* Fix untuk card shadow */
         .card {
             margin-bottom: 1.5rem;
+        }
+
+        /* Scroll to Top Button */
+        .scroll-to-top {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            display: none;
+            width: 2.75rem;
+            height: 2.75rem;
+            text-align: center;
+            color: #fff;
+            background: rgba(90, 92, 105, 0.5);
+            line-height: 46px;
+            border-radius: 0.35rem;
+            z-index: 900;
+            text-decoration: none;
+        }
+
+        .scroll-to-top:hover {
+            background: #5a5c69;
+            color: #fff;
+        }
+
+        .scroll-to-top:focus {
+            outline: none;
         }
     </style>
 
@@ -134,12 +251,16 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        <!-- Overlay untuk close sidebar di mobile -->
+        <!-- Overlay untuk Mobile -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        <!-- Toggle Button (Burger Menu) -->
-        <button class="sidebar-toggle" id="sidebarToggle">
-            <i class="fas fa-bars"></i>
+        <!-- Toggle Button - Hamburger Menu (Di Luar Sidebar dengan Lingkaran) -->
+        <button class="sidebar-toggle" id="sidebarToggle" type="button">
+            <div class="hamburger-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </button>
 
         <!-- Sidebar -->
@@ -175,6 +296,11 @@
     </div>
     <!-- End of Page Wrapper -->
 
+    <!-- Scroll to Top Button -->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
     <!-- jQuery -->
     <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
     
@@ -185,8 +311,10 @@
     <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
 
-    <!-- SweetAlert2 (jika digunakan) -->
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @if(session('success'))
     <script>
@@ -199,49 +327,110 @@
         });
     </script>
     @endif
+    
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const sidebar = document.getElementById("sidebar");
-            const sidebarToggle = document.getElementById("sidebarToggle");
-            const sidebarOverlay = document.getElementById("sidebarOverlay");
-            const sidebarCollapseBtn = document.getElementById("sidebarCollapse");
+        // Vanilla JavaScript untuk Sidebar Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const body = document.body;
+            
+            // Function untuk cek apakah mobile
+            const isMobile = () => window.innerWidth < 768;
 
-            // Toggle sidebar dengan tombol burger utama
+            // Set initial state saat load
+            function setInitialState() {
+                if (isMobile()) {
+                    body.classList.remove('sidebar-visible');
+                    body.classList.remove('sidebar-hidden');
+                } else {
+                    body.classList.remove('sidebar-visible');
+                    body.classList.remove('sidebar-hidden');
+                }
+            }
+
+            setInitialState();
+
+            // Toggle sidebar ketika button diklik
             if (sidebarToggle) {
-                sidebarToggle.addEventListener("click", function () {
-                    sidebar.classList.toggle("collapsed");
+                sidebarToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     
-                    // Untuk mobile, tambahkan class 'show'
-                    if (window.innerWidth <= 768) {
-                        sidebar.classList.toggle("show");
-                        sidebarOverlay.classList.toggle("active");
+                    console.log('Toggle clicked! Window width:', window.innerWidth);
+
+                    if (isMobile()) {
+                        // Mobile: toggle visible class
+                        body.classList.toggle('sidebar-visible');
+                        sidebarOverlay.classList.toggle('active');
+                        console.log('Mobile mode - Sidebar visible:', body.classList.contains('sidebar-visible'));
+                    } else {
+                        // Desktop: toggle hidden class
+                        body.classList.toggle('sidebar-hidden');
+                        console.log('Desktop mode - Sidebar hidden:', body.classList.contains('sidebar-hidden'));
                     }
                 });
             }
 
-            // Toggle dari tombol di dalam sidebar (opsional)
-            if (sidebarCollapseBtn) {
-                sidebarCollapseBtn.addEventListener("click", function () {
-                    sidebar.classList.toggle("collapsed");
-                });
-            }
-
-            // Close sidebar saat klik overlay (mobile)
+            // Close sidebar ketika overlay diklik (mobile)
             if (sidebarOverlay) {
-                sidebarOverlay.addEventListener("click", function () {
-                    sidebar.classList.remove("show");
-                    sidebar.classList.add("collapsed");
-                    sidebarOverlay.classList.remove("active");
+                sidebarOverlay.addEventListener('click', function() {
+                    body.classList.remove('sidebar-visible');
+                    sidebarOverlay.classList.remove('active');
                 });
             }
 
-            // Auto-close sidebar di mobile saat window resize
-            window.addEventListener("resize", function () {
-                if (window.innerWidth > 768) {
-                    sidebarOverlay.classList.remove("active");
+            // Close sidebar ketika link diklik (mobile)
+            const sidebarLinks = document.querySelectorAll('.sidebar a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (isMobile()) {
+                        body.classList.remove('sidebar-visible');
+                        sidebarOverlay.classList.remove('active');
+                    }
+                });
+            });
+
+            // Handle window resize
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    if (isMobile()) {
+                        body.classList.remove('sidebar-hidden');
+                        if (!body.classList.contains('sidebar-visible')) {
+                            sidebarOverlay.classList.remove('active');
+                        }
+                    } else {
+                        body.classList.remove('sidebar-visible');
+                        sidebarOverlay.classList.remove('active');
+                    }
+                }, 250);
+            });
+
+            // Scroll to top button functionality
+            const scrollToTop = document.querySelector('.scroll-to-top');
+            
+            window.addEventListener('scroll', function() {
+                if (scrollToTop) {
+                    if (window.pageYOffset > 100) {
+                        scrollToTop.style.display = 'block';
+                    } else {
+                        scrollToTop.style.display = 'none';
+                    }
                 }
             });
+
+            if (scrollToTop) {
+                scrollToTop.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            }
         });
     </script>
 
