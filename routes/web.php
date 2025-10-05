@@ -1,28 +1,31 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-});
-
-require __DIR__.'/auth.php';
-
 use App\Http\Controllers\SkillController;
-
-Route::get('/skills', [SkillController::class, 'index'])->name('skills.index');
-Route::get('/skills/create', [SkillController::class, 'create'])->name('skills.create');
-Route::post('/skills', [SkillController::class, 'store'])->name('skills.store');
-Route::get('/skills/{skill}/edit', [SkillController::class, 'edit'])->name('skills.edit');
-Route::put('/skills/{skill}', [SkillController::class, 'update'])->name('skills.update');
-Route::delete('/skills/{skill}', [SkillController::class, 'destroy'])->name('skills.destroy');
-
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\DashboardController;
 
-Route::resource('projects', \App\Http\Controllers\ProjectController::class);
+// Redirect root ke dashboard
+Route::get('/', function () {
+    return redirect()->route('dashboard');
+});
 
+// Dashboard pakai controller
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+// Skills
+Route::resource('skills', SkillController::class);
+
+// Projects
+Route::resource('projects', ProjectController::class);
+
+require __DIR__ . '/auth.php';
+
+Route::get('/profile', function () {
+    return view('profile');
+})->name('profile');
+
+Route::get('/settings', function () {
+    return view('settings');
+})->name('settings');
 

@@ -1,3 +1,46 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* === Sidebar Settings === */
+#sidebar.collapsed {
+    width: 80px !important;
+}
+
+#sidebar.collapsed .sidebar-heading,
+#sidebar.collapsed span {
+    display: none;
+}
+
+#sidebar.collapsed .nav-item {
+    text-align: center;
+}
+
+#sidebar.collapsed i {
+    font-size: 1.2rem;
+}
+
+#sidebar {
+    width: 240px;
+    transition: all 0.3s ease;
+}
+
+body {
+    padding-left: 240px;
+    transition: all 0.3s ease;
+}
+
+#sidebar.collapsed + main {
+    margin-left: 80px !important;
+}
+
+/* === Tambahkan kode aktif sidebar di bawah ini === */
+.nav-item.active > .nav-link {
+    background-color: #4e73df !important;
+    color: #fff !important;
+    border-radius: 5px;
+}
+
+.nav-item.active > .nav-link i {
+    color: #fff !important;
+}
