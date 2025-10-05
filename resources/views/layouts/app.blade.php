@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
@@ -18,6 +21,8 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+    
+
     <style>
         * {
             margin: 0;
@@ -27,7 +32,267 @@
 
         body {
             overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
+
+        /* ============================================
+           DARK MODE STYLES - GLOBAL
+        ============================================ */
+        
+        /* Body Dark Mode */
+        body.dark-mode {
+            background-color: #0f0f1e !important;
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode #wrapper {
+            background-color: #0f0f1e !important;
+        }
+
+        /* Sidebar Dark Mode */
+        body.dark-mode .sidebar {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%) !important;
+        }
+
+        body.dark-mode .sidebar-brand {
+            background-color: rgba(0, 0, 0, 0.2) !important;
+        }
+
+        body.dark-mode .sidebar .nav-item .nav-link {
+            color: #b0b0b0 !important;
+        }
+
+        body.dark-mode .sidebar .nav-item .nav-link:hover,
+        body.dark-mode .sidebar .nav-item .nav-link.active {
+            color: #ffffff !important;
+            background-color: rgba(78, 115, 223, 0.2) !important;
+        }
+
+        body.dark-mode .sidebar .sidebar-heading {
+            color: #6c757d !important;
+        }
+
+        body.dark-mode .sidebar-divider {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Topbar Dark Mode */
+        body.dark-mode .topbar {
+            background-color: #1a1a2e !important;
+            border-bottom: 1px solid #2d2d44 !important;
+        }
+
+        body.dark-mode .topbar h5,
+        body.dark-mode .topbar .text-gray-800 {
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode .topbar small,
+        body.dark-mode .topbar .text-muted {
+            color: #b0b0b0 !important;
+        }
+
+        body.dark-mode .topbar-divider {
+            border-right-color: #374151 !important;
+        }
+
+        body.dark-mode .topbar .border-right {
+            border-right-color: #374151 !important;
+        }
+
+        body.dark-mode .dropdown-menu {
+            background-color: #2d2d44 !important;
+            border-color: #374151 !important;
+        }
+
+        body.dark-mode .dropdown-item {
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode .dropdown-item:hover {
+            background-color: #374151 !important;
+            color: #ffffff !important;
+        }
+
+        body.dark-mode .dropdown-divider {
+            border-top-color: #374151 !important;
+        }
+
+        /* Cards Dark Mode */
+        body.dark-mode .card {
+            background-color: #1a1a2e !important;
+            border-color: #2d2d44 !important;
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode .card-header {
+            background-color: #16213e !important;
+            border-bottom-color: #2d2d44 !important;
+        }
+
+        body.dark-mode .card-body {
+            background-color: #1a1a2e !important;
+        }
+
+        body.dark-mode .text-gray-800,
+        body.dark-mode h1, body.dark-mode h2, 
+        body.dark-mode h3, body.dark-mode h4, 
+        body.dark-mode h5, body.dark-mode h6 {
+            color: #e0e0e0 !important;
+        }
+
+        /* Tables Dark Mode */
+        body.dark-mode .table {
+            color: #e0e0e0 !important;
+            border-color: #2d2d44 !important;
+        }
+
+        body.dark-mode .table thead th {
+            background-color: #16213e !important;
+            color: #e0e0e0 !important;
+            border-color: #2d2d44 !important;
+        }
+
+        body.dark-mode .table tbody tr {
+            border-color: #2d2d44 !important;
+        }
+
+        body.dark-mode .table tbody tr:hover {
+            background-color: #16213e !important;
+        }
+
+        body.dark-mode .table-bordered td,
+        body.dark-mode .table-bordered th {
+            border-color: #2d2d44 !important;
+        }
+
+        /* Forms Dark Mode */
+        body.dark-mode .form-control {
+            background-color: #16213e !important;
+            border-color: #2d2d44 !important;
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode .form-control:focus {
+            background-color: #1a1a2e !important;
+            border-color: #4e73df !important;
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode .form-control::placeholder {
+            color: #6c757d !important;
+        }
+
+        body.dark-mode label {
+            color: #b0b0b0 !important;
+        }
+
+        /* Buttons Dark Mode */
+        body.dark-mode .btn-light {
+            background-color: #2d2d44 !important;
+            border-color: #374151 !important;
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode .btn-light:hover {
+            background-color: #374151 !important;
+            color: #ffffff !important;
+        }
+
+        /* Alerts Dark Mode */
+        body.dark-mode .alert {
+            background-color: #16213e !important;
+            border-color: #2d2d44 !important;
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode .alert-info {
+            background-color: #1a3a52 !important;
+            border-color: #2d5a7b !important;
+            color: #9ec5fe !important;
+        }
+
+        body.dark-mode .alert-success {
+            background-color: #1a3a2e !important;
+            border-color: #2d5a4b !important;
+            color: #75b798 !important;
+        }
+
+        body.dark-mode .alert-warning {
+            background-color: #3a321a !important;
+            border-color: #5a4b2d !important;
+            color: #ffda6a !important;
+        }
+
+        body.dark-mode .alert-danger {
+            background-color: #3a1a1a !important;
+            border-color: #5a2d2d !important;
+            color: #ea868f !important;
+        }
+
+        /* Borders Dark Mode */
+        body.dark-mode .border {
+            border-color: #2d2d44 !important;
+        }
+
+        body.dark-mode .border-bottom {
+            border-bottom-color: #2d2d44 !important;
+        }
+
+        body.dark-mode .border-top {
+            border-top-color: #2d2d44 !important;
+        }
+
+        /* Footer Dark Mode */
+        body.dark-mode .footer {
+            background-color: #1a1a2e !important;
+            border-top: 1px solid #2d2d44 !important;
+            color: #b0b0b0 !important;
+        }
+
+        /* Badge Dark Mode */
+        body.dark-mode .badge-secondary {
+            background-color: #374151 !important;
+        }
+
+        /* Progress Bar Dark Mode */
+        body.dark-mode .progress {
+            background-color: #2d2d44 !important;
+        }
+
+        /* List Group Dark Mode */
+        body.dark-mode .list-group-item {
+            background-color: #1a1a2e !important;
+            border-color: #2d2d44 !important;
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode .list-group-item:hover {
+            background-color: #16213e !important;
+        }
+
+        /* Modal Dark Mode */
+        body.dark-mode .modal-content {
+            background-color: #1a1a2e !important;
+            border-color: #2d2d44 !important;
+        }
+
+        body.dark-mode .modal-header {
+            background-color: #16213e !important;
+            border-bottom-color: #2d2d44 !important;
+        }
+
+        body.dark-mode .modal-footer {
+            border-top-color: #2d2d44 !important;
+        }
+
+        body.dark-mode .close {
+            color: #e0e0e0 !important;
+        }
+
+        /* ============================================
+           ORIGINAL STYLES
+        ============================================ */
 
         /* Sidebar Toggle Button - Hamburger Menu dengan Lingkaran */
         .sidebar-toggle {
@@ -313,8 +578,6 @@
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- SweetAlert2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @if(session('success'))
     <script>
@@ -327,11 +590,18 @@
         });
     </script>
     @endif
-    
 
     <script>
-        // Vanilla JavaScript untuk Sidebar Toggle
+        // Vanilla JavaScript untuk Sidebar Toggle dan Dark Mode
         document.addEventListener('DOMContentLoaded', function() {
+            // ========== DARK MODE INITIALIZATION ==========
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                console.log('Dark mode loaded from localStorage');
+            }
+
+            // ========== SIDEBAR TOGGLE ==========
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebarOverlay = document.getElementById('sidebarOverlay');
             const body = document.body;
@@ -357,18 +627,14 @@
                 sidebarToggle.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    
-                    console.log('Toggle clicked! Window width:', window.innerWidth);
 
                     if (isMobile()) {
                         // Mobile: toggle visible class
                         body.classList.toggle('sidebar-visible');
                         sidebarOverlay.classList.toggle('active');
-                        console.log('Mobile mode - Sidebar visible:', body.classList.contains('sidebar-visible'));
                     } else {
                         // Desktop: toggle hidden class
                         body.classList.toggle('sidebar-hidden');
-                        console.log('Desktop mode - Sidebar hidden:', body.classList.contains('sidebar-hidden'));
                     }
                 });
             }
@@ -433,6 +699,9 @@
             }
         });
     </script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
     @stack('scripts')
 

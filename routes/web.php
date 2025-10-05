@@ -9,6 +9,26 @@ use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\GoogleController;
 
+Route::put('/settings/social', [SettingsController::class, 'updateSocial'])->name('settings.social.update');
+
+Route::put('/settings/appearance', [SettingsController::class, 'updateAppearance'])->name('settings.appearance.update');
+
+
+Route::middleware(['auth'])->group(function () {
+    // General settings
+    Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
+
+    // Social media settings
+    Route::put('/settings/social', [SettingsController::class, 'updateSocial'])->name('settings.updateSocial');
+
+    // About me
+    Route::put('/settings/about', [SettingsController::class, 'updateAbout'])->name('settings.updateAbout');
+});
+
+
+Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar.update');
+Route::delete('/profile/avatar', [ProfileController::class, 'destroyAvatar'])->name('profile.avatar.destroy');
+
 Route::get('/test-env', function () {
     dd(env('GOOGLE_CLIENT_ID'));
 });
@@ -21,6 +41,9 @@ Route::get('/', function () {
 
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
+Route::post('/email/verification-notification', [VerificationController::class, 'send'])->name('verification.send');
+
 
 
 // Login Routes
@@ -81,5 +104,6 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::resource('projects', ProjectController::class);
 });
+
 
 require __DIR__ . '/auth.php';

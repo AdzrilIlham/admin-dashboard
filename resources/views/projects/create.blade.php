@@ -1,71 +1,66 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1 class="mb-4">Tambah Project</h1>
-
-    {{-- Tampilkan error kalau ada --}}
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+<div class="container-fluid">
+    <h1 class="h3 mb-4">Create Project</h1>
+    
+    <div class="card shadow">
+        <div class="card-body">
+            <!-- TAMBAHKAN enctype untuk upload file -->
+            <form method="POST" action="{{ route('projects.store') }}" enctype="multipart/form-data">
+                @csrf
+                
+                <!-- Input Name (yang sudah ada) -->
+                <div class="form-group">
+                    <label for="name">Project Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                
+                <!-- TARUH KODE ICON & THUMBNAIL DI SINI (dari artifact #4) -->
+                <div class="form-group">
+                    <label for="icon">Icon (Font Awesome atau URL)</label>
+                    <input type="text" class="form-control @error('icon') is-invalid @enderror" 
+                           id="icon" name="icon" value="{{ old('icon', $project->icon ?? '') }}"
+                           placeholder="fab fa-laravel atau /images/project-icon.png">
+                    <small class="form-text text-muted">
+                        Icon kecil untuk thumbnail. Contoh: fab fa-wordpress, fas fa-globe
+                    </small>
+                    @error('icon')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <div class="form-group">
+                    <label for="thumbnail">Project Thumbnail</label>
+                    <input type="file" class="form-control-file @error('thumbnail') is-invalid @enderror" 
+                           id="thumbnail" name="thumbnail" accept="image/*">
+                    <small class="form-text text-muted">
+                        Upload screenshot atau gambar project (Max: 2MB)
+                    </small>
+                    @error('thumbnail')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <!-- Input Description (yang sudah ada) -->
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea class="form-control" id="description" name="description"></textarea>
+                </div>
+                
+                <!-- Input Status (yang sudah ada) -->
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select class="form-control" id="status" name="status">
+                        <option value="ongoing">Ongoing</option>
+                        <option value="completed">Completed</option>
+                        <option value="paused">Paused</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
         </div>
-    @endif
-
-    <form action="{{ route('projects.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-
-        <div class="mb-3">
-            <label class="form-label">Judul Project <span class="text-danger">*</span></label>
-            <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title') }}" required>
-            @error('title')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Deskripsi <span class="text-danger">*</span></label>
-            <textarea name="description" class="form-control @error('description') is-invalid @enderror" rows="4" required>{{ old('description') }}</textarea>
-            @error('description')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Status <span class="text-danger">*</span></label>
-            <select name="status" class="form-control @error('status') is-invalid @enderror" required>
-                <option value="">-- Pilih Status --</option>
-                <option value="ongoing" {{ old('status') == 'ongoing' ? 'selected' : '' }}>Ongoing</option>
-                <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                <option value="paused" {{ old('status') == 'paused' ? 'selected' : '' }}>Paused</option>
-            </select>
-            @error('status')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Link Project (Opsional)</label>
-            <input type="url" name="link" class="form-control @error('link') is-invalid @enderror" value="{{ old('link') }}" placeholder="https://example.com">
-            @error('link')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Gambar Project (Opsional)</label>
-            <input type="file" name="image" class="form-control @error('image') is-invalid @enderror" accept="image/*">
-            @error('image')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-            <small class="form-text text-muted">Format: JPG, PNG, GIF, SVG. Maksimal 2MB</small>
-        </div>
-
-        <button type="submit" class="btn btn-success">Simpan</button>
-        <a href="{{ route('projects.index') }}" class="btn btn-secondary">Batal</a>
-    </form>
+    </div>
 </div>
 @endsection
