@@ -7,6 +7,37 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Auth\GoogleController;
+
+Route::get('/test-env', function () {
+    dd(env('GOOGLE_CLIENT_ID'));
+});
+
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+
+Route::get('/', function () {
+    return 'Homepage aktif';
+});
+
+Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
+
+// Login Routes
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+
+// Register Routes
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
+
+// Logout
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Password Reset (optional)
+Route::get('/password/reset', function() {
+    return view('auth.passwords.email');
+})->name('password.request');
 
 // Route logout
 Route::post('/logout', function () {
