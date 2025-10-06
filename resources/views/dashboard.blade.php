@@ -196,47 +196,60 @@
                         <div class="col-md-4 mb-3">
                             <a href="{{ route('skills.index') }}" class="btn btn-primary btn-block d-flex align-items-center justify-content-center">
                                 <i class="fas fa-code mr-2"></i>
-                            <span>Kelola Skills</span>
+                                <span>Kelola Skills</span>
                             </a>
                         </div>
                         <div class="col-md-4 mb-3">
                             <a href="{{ route('projects.index') }}" class="btn btn-success btn-block d-flex align-items-center justify-content-center">
-                                    <i class="fas fa-folder-open"></i>
-                                </span>
-                                <span class="text">Kelola Projects</span>
+                                <i class="fas fa-folder-open mr-2"></i>
+                                <span>Kelola Projects</span>
                             </a>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <a href="{{ route('settings') }}" class="btn btn-secondary  d-flex align-items-center justify-content-center">
-                                    <i class="fas fa-cog"></i>
-                                </span>
-                                <span class="text">Settings</span>
+                            <a href="{{ route('settings') }}" class="btn btn-secondary btn-block d-flex align-items-center justify-content-center">
+                                <i class="fas fa-cog mr-2"></i>
+                                <span>Settings</span>
                             </a>
                         </div>
                     </div>
 
-                    <!-- Project Status Overview -->
+                    <!-- Project Status Overview - UPDATED -->
                     <div class="row mt-4">
-                        <div class="col-md-4 text-center">
-                            <div class="mb-2">
-                                <i class="fas fa-check-circle fa-3x text-success"></i>
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center py-4">
+                                    <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" 
+                                         style="width: 70px; height: 70px;">
+                                        <i class="fas fa-check-circle fa-2x text-success"></i>
+                                    </div>
+                                    <h6 class="text-muted text-uppercase small mb-2">Completed</h6>
+                                    <h3 class="font-weight-bold mb-0">{{ $completedProjects }}</h3>
+                                </div>
                             </div>
-                            <h6 class="text-success font-weight-bold">Completed</h6>
-                            <h4 class="font-weight-bold">{{ $completedProjects }}</h4>
                         </div>
-                        <div class="col-md-4 text-center">
-                            <div class="mb-2">
-                                <i class="fas fa-spinner fa-3x text-primary"></i>
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center py-4">
+                                    <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" 
+                                         style="width: 70px; height: 70px;">
+                                        <i class="fas fa-spinner fa-2x text-primary"></i>
+                                    </div>
+                                    <h6 class="text-muted text-uppercase small mb-2">Ongoing</h6>
+                                    <h3 class="font-weight-bold mb-0">{{ $ongoingProjects }}</h3>
+                                </div>
                             </div>
-                            <h6 class="text-primary font-weight-bold">Ongoing</h6>
-                            <h4 class="font-weight-bold">{{ $ongoingProjects }}</h4>
                         </div>
-                        <div class="col-md-4 text-center">
-                            <div class="mb-2">
-                                <i class="fas fa-pause-circle fa-3x text-warning"></i>
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center py-4">
+                                    <div class="rounded-circle bg-warning bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" 
+                                         style="width: 70px; height: 70px;">
+                                        <i class="fas fa-pause-circle fa-2x text-warning"></i>
+                                    </div>
+                                    <h6 class="text-muted text-uppercase small mb-2">Paused</h6>
+                                    <h3 class="font-weight-bold mb-0">{{ $pausedProjects }}</h3>
+                                </div>
                             </div>
-                            <h6 class="text-warning font-weight-bold">Paused</h6>
-                            <h4 class="font-weight-bold">{{ $pausedProjects }}</h4>
                         </div>
                     </div>
                 </div>
@@ -497,6 +510,27 @@
         font-size: 0.75rem;
     }
 
+    /* Background opacity utilities */
+    .bg-success.bg-opacity-10 {
+        background-color: rgba(28, 200, 138, 0.1) !important;
+    }
     
+    .bg-primary.bg-opacity-10 {
+        background-color: rgba(78, 115, 223, 0.1) !important;
+    }
+    
+    .bg-warning.bg-opacity-10 {
+        background-color: rgba(246, 194, 62, 0.1) !important;
+    }
+
+    /* Card hover effect for status cards */
+    .card.shadow-sm {
+        transition: all 0.3s ease;
+    }
+    
+    .card.shadow-sm:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
 </style>
 @endpush

@@ -195,6 +195,52 @@
     </div>
 </div>
 
+<!-- Skills Distribution Card -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 bg-primary text-white">
+                <h6 class="m-0 font-weight-bold">
+                    <i class="fas fa-chart-pie me-2"></i>Skills Distribution
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="distribution-item d-flex justify-content-between align-items-center mb-3 p-2 border-bottom">
+                    <div>
+                        <span class="badge bg-success me-2">●</span>
+                        <span class="text-dark">Expert (80-100%)</span>
+                    </div>
+                    <span class="badge bg-success rounded-pill fs-6">{{ $distribution['expert'] }}</span>
+                </div>
+                
+                <div class="distribution-item d-flex justify-content-between align-items-center mb-3 p-2 border-bottom">
+                    <div>
+                        <span class="badge bg-info me-2">●</span>
+                        <span class="text-dark">Advanced (60-79%)</span>
+                    </div>
+                    <span class="badge bg-info rounded-pill fs-6">{{ $distribution['advanced'] }}</span>
+                </div>
+                
+                <div class="distribution-item d-flex justify-content-between align-items-center mb-3 p-2 border-bottom">
+                    <div>
+                        <span class="badge bg-warning me-2">●</span>
+                        <span class="text-dark">Intermediate (40-59%)</span>
+                    </div>
+                    <span class="badge bg-warning rounded-pill fs-6">{{ $distribution['intermediate'] }}</span>
+                </div>
+                
+                <div class="distribution-item d-flex justify-content-between align-items-center p-2">
+                    <div>
+                        <span class="badge bg-danger me-2">●</span>
+                        <span class="text-dark">Beginner (< 40%)</span>
+                    </div>
+                    <span class="badge bg-danger rounded-pill fs-6">{{ $distribution['beginner'] }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')

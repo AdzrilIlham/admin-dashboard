@@ -58,21 +58,13 @@ class DashboardController extends Controller
         $recentProjects = Project::latest()->take(5)->get();
         
         // Skills by proficiency for chart (Pie Chart)
-        // Check if proficiency column exists
-        try {
-            $skillsByProficiency = Skill::select('proficiency', DB::raw('count(*) as total'))
-                ->groupBy('proficiency')
-                ->pluck('total', 'proficiency')
-                ->toArray();
-        } catch (\Exception $e) {
-            // If proficiency column doesn't exist, use default data
-            $skillsByProficiency = [
-                'Beginner' => 0,
-                'Intermediate' => 0,
-                'Advanced' => 0,
-                'Expert' => 0
-            ];
-        }
+        // FIXED: Gunakan level (0-100) bukan proficiency
+        $skillsByProficiency = [
+            'Expert' => Skill::where('level', '>=', 80)->count(),
+            'Advanced' => Skill::whereBetween('level', [60, 79])->count(),
+            'Intermediate' => Skill::whereBetween('level', [40, 59])->count(),
+            'Beginner' => Skill::where('level', '<', 40)->count()
+        ];
         
         // Projects by status for chart (Donut Chart)
         try {
@@ -81,7 +73,6 @@ class DashboardController extends Controller
                 ->pluck('total', 'status')
                 ->toArray();
         } catch (\Exception $e) {
-            // If status column doesn't exist or has issues
             $projectsByStatus = [
                 'ongoing' => 0,
                 'completed' => 0,
@@ -90,7 +81,6 @@ class DashboardController extends Controller
         }
         
         // Monthly project growth (for line chart) - Last 6 months
-        // SQLite compatible version using strftime
         $monthlyProjects = [];
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
@@ -101,39 +91,18 @@ class DashboardController extends Controller
             $monthlyProjects[$month] = $count;
         }
         
-        // Profile views (dummy data - you can replace with actual tracking later)
+        // Profile views (dummy data)
         $profileViews = 0;
         $todayViews = 0;
         
-        // If you have a visitors table, you can get real data:
-        // $profileViews = DB::table('visitors')->count();
-        // $todayViews = DB::table('visitors')->whereDate('created_at', today())->count();
+        // Top Skills - FIXED: Langsung gunakan level
+        $topSkills = Skill::orderBy('level', 'desc')
+            ->take(4)
+            ->get();
         
-        // Top Skills - get skills with highest proficiency or most recent
-        $topSkills = Skill::latest()
-    ->take(5)
-    ->get()
-    ->map(function($skill) {
-        // Cek apakah ada kolom level, jika ada gunakan itu
-        if (isset($skill->level)) {
-            return $skill;
-        }
-        
-        // Fallback ke proficiency mapping
-        $skill->level = match($skill->proficiency) {
-            'Expert' => 90,
-            'Advanced' => 75,
-            'Intermediate' => 50,
-            'Beginner' => 25,
-            default => 50
-        };
-        return $skill;
-    });
-        
-        // Activity log - recent activities (you can customize this)
+        // Activity log - recent activities
         $activityLog = collect([]);
         
-        // Combine recent skills and projects into activity log
         foreach ($recentSkills as $skill) {
             $activityLog->push([
                 'type' => 'skill',
@@ -154,15 +123,14 @@ class DashboardController extends Controller
             ]);
         }
         
-        // Sort by time and take latest 10
         $activityLog = $activityLog->sortByDesc('time')->take(10);
         
-        // Skill Distribution by proficiency level
+        // FIXED: Skill Distribution berdasarkan level (0-100)
         $skillDistribution = [
-            'expert' => Skill::where('proficiency', 'Expert')->count(),
-            'advanced' => Skill::where('proficiency', 'Advanced')->count(),
-            'intermediate' => Skill::where('proficiency', 'Intermediate')->count(),
-            'beginner' => Skill::where('proficiency', 'Beginner')->count(),
+            'expert' => Skill::where('level', '>=', 80)->count(),
+            'advanced' => Skill::whereBetween('level', [60, 79])->count(),
+            'intermediate' => Skill::whereBetween('level', [40, 59])->count(),
+            'beginner' => Skill::where('level', '<', 40)->count(),
         ];
         
         return view('dashboard', compact(
