@@ -6,40 +6,47 @@ use App\Models\Skill;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Visitor;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Total counts
-        $totalSkills = Skill::count();
-        $totalProjects = Project::count();
+        $userId = auth()->id(); // Ambil ID user yang login
         
-        // Project status counts
-        $completedProjects = Project::where('status', 'completed')->count();
-        $ongoingProjects = Project::where('status', 'ongoing')->count();
-        $pausedProjects = Project::where('status', 'paused')->count();
+        // Total counts - FILTER BY USER
+        $totalSkills = Skill::where('user_id', $userId)->count();
+        $totalProjects = Project::where('user_id', $userId)->count();
         
-        // Growth calculations (comparing this month with last month)
+        // Project status counts - FILTER BY USER
+        $completedProjects = Project::where('user_id', $userId)->where('status', 'completed')->count();
+        $ongoingProjects = Project::where('user_id', $userId)->where('status', 'ongoing')->count();
+        $pausedProjects = Project::where('user_id', $userId)->where('status', 'paused')->count();
+        
+        // Growth calculations
         $currentMonth = now()->month;
         $currentYear = now()->year;
         $lastMonth = now()->subMonth()->month;
         $lastMonthYear = now()->subMonth()->year;
         
-        $skillsThisMonth = Skill::whereMonth('created_at', $currentMonth)
+        $skillsThisMonth = Skill::where('user_id', $userId)
+            ->whereMonth('created_at', $currentMonth)
             ->whereYear('created_at', $currentYear)
             ->count();
-        $skillsLastMonth = Skill::whereMonth('created_at', $lastMonth)
+        $skillsLastMonth = Skill::where('user_id', $userId)
+            ->whereMonth('created_at', $lastMonth)
             ->whereYear('created_at', $lastMonthYear)
             ->count();
         $skillsGrowth = $skillsLastMonth > 0 
             ? round((($skillsThisMonth - $skillsLastMonth) / $skillsLastMonth) * 100, 1)
             : ($skillsThisMonth > 0 ? 100 : 0);
         
-        $projectsThisMonth = Project::whereMonth('created_at', $currentMonth)
+        $projectsThisMonth = Project::where('user_id', $userId)
+            ->whereMonth('created_at', $currentMonth)
             ->whereYear('created_at', $currentYear)
             ->count();
-        $projectsLastMonth = Project::whereMonth('created_at', $lastMonth)
+        $projectsLastMonth = Project::where('user_id', $userId)
+            ->whereMonth('created_at', $lastMonth)
             ->whereYear('created_at', $lastMonthYear)
             ->count();
         $projectsGrowth = $projectsLastMonth > 0 
@@ -51,24 +58,24 @@ class DashboardController extends Controller
             ? round(($completedProjects / $totalProjects) * 100, 1)
             : 0;
         
-        // Recent skills
-        $recentSkills = Skill::latest()->take(5)->get();
+        // Recent skills - FILTER BY USER
+        $recentSkills = Skill::where('user_id', $userId)->latest()->take(5)->get();
         
-        // Recent projects
-        $recentProjects = Project::latest()->take(5)->get();
+        // Recent projects - FILTER BY USER
+        $recentProjects = Project::where('user_id', $userId)->latest()->take(5)->get();
         
-        // Skills by proficiency for chart (Pie Chart)
-        // FIXED: Gunakan level (0-100) bukan proficiency
+        // Skills by proficiency - FILTER BY USER
         $skillsByProficiency = [
-            'Expert' => Skill::where('level', '>=', 80)->count(),
-            'Advanced' => Skill::whereBetween('level', [60, 79])->count(),
-            'Intermediate' => Skill::whereBetween('level', [40, 59])->count(),
-            'Beginner' => Skill::where('level', '<', 40)->count()
+            'Expert' => Skill::where('user_id', $userId)->where('level', '>=', 80)->count(),
+            'Advanced' => Skill::where('user_id', $userId)->whereBetween('level', [60, 79])->count(),
+            'Intermediate' => Skill::where('user_id', $userId)->whereBetween('level', [40, 59])->count(),
+            'Beginner' => Skill::where('user_id', $userId)->where('level', '<', 40)->count()
         ];
         
-        // Projects by status for chart (Donut Chart)
+        // Projects by status - FILTER BY USER
         try {
-            $projectsByStatus = Project::select('status', DB::raw('count(*) as total'))
+            $projectsByStatus = Project::where('user_id', $userId)
+                ->select('status', DB::raw('count(*) as total'))
                 ->groupBy('status')
                 ->pluck('total', 'status')
                 ->toArray();
@@ -80,27 +87,29 @@ class DashboardController extends Controller
             ];
         }
         
-        // Monthly project growth (for line chart) - Last 6 months
+        // Monthly project growth - FILTER BY USER
         $monthlyProjects = [];
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $month = $date->format('M');
-            $count = Project::whereYear('created_at', $date->year)
+            $count = Project::where('user_id', $userId)
+                ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->count();
             $monthlyProjects[$month] = $count;
         }
+       
+        // Profile views - TEMPORARY FIX: tidak filter by user dulu
+        $profileViews = Visitor::sum('visit_count');
+        $todayViews = Visitor::whereDate('created_at', today())->sum('visit_count');
         
-        // Profile views (dummy data)
-        $profileViews = 0;
-        $todayViews = 0;
-        
-        // Top Skills - FIXED: Langsung gunakan level
-        $topSkills = Skill::orderBy('level', 'desc')
+        // Top Skills - FILTER BY USER
+        $topSkills = Skill::where('user_id', $userId)
+            ->orderBy('level', 'desc')
             ->take(4)
             ->get();
         
-        // Activity log - recent activities
+        // Activity log
         $activityLog = collect([]);
         
         foreach ($recentSkills as $skill) {
@@ -116,7 +125,7 @@ class DashboardController extends Controller
         foreach ($recentProjects as $project) {
             $activityLog->push([
                 'type' => 'project',
-                'title' => 'New project: ' . $project->name,
+                'title' => 'New project: ' . $project->title,
                 'time' => $project->created_at->diffForHumans(),
                 'icon' => 'fa-folder',
                 'color' => 'success'
@@ -125,12 +134,12 @@ class DashboardController extends Controller
         
         $activityLog = $activityLog->sortByDesc('time')->take(10);
         
-        // FIXED: Skill Distribution berdasarkan level (0-100)
+        // Skill Distribution - FILTER BY USER
         $skillDistribution = [
-            'expert' => Skill::where('level', '>=', 80)->count(),
-            'advanced' => Skill::whereBetween('level', [60, 79])->count(),
-            'intermediate' => Skill::whereBetween('level', [40, 59])->count(),
-            'beginner' => Skill::where('level', '<', 40)->count(),
+            'expert' => Skill::where('user_id', $userId)->where('level', '>=', 80)->count(),
+            'advanced' => Skill::where('user_id', $userId)->whereBetween('level', [60, 79])->count(),
+            'intermediate' => Skill::where('user_id', $userId)->whereBetween('level', [40, 59])->count(),
+            'beginner' => Skill::where('user_id', $userId)->where('level', '<', 40)->count(),
         ];
         
         return view('dashboard', compact(

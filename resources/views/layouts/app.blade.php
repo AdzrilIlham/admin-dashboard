@@ -506,6 +506,155 @@
         .scroll-to-top:focus {
             outline: none;
         }
+
+        /* ============================================
+   SIDEBAR - WARNA UNGU/BIRU SEPERTI GAMBAR 1
+============================================ */
+
+/* Sidebar Base - Gradient Ungu/Biru */
+.sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 14rem !important;
+    height: 100vh !important;
+    z-index: 1000 !important;
+    background: linear-gradient(180deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%) !important;
+    box-shadow: 4px 0 15px rgba(79, 70, 229, 0.3) !important;
+    transition: transform 0.3s ease-in-out !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+/* Sidebar Brand/Logo */
+.sidebar .sidebar-brand {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    color: #ffffff !important;
+    padding: 1.5rem 1rem !important;
+    font-weight: 700 !important;
+    font-size: 1.2rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.sidebar .sidebar-brand-icon {
+    color: #ffffff !important;
+    font-size: 1.5rem !important;
+}
+
+.sidebar .sidebar-brand-text {
+    color: #ffffff !important;
+    margin-left: 0.5rem !important;
+}
+
+/* Sidebar Headings (seperti MANAGEMENT, OTHERS) */
+.sidebar .sidebar-heading {
+    color: rgba(255, 255, 255, 0.5) !important;
+    text-transform: uppercase !important;
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    padding: 0.75rem 1rem !important;
+    margin-top: 0.5rem !important;
+}
+
+/* Sidebar Menu Items */
+.sidebar .nav-item {
+    margin: 0.25rem 0.5rem !important;
+}
+
+.sidebar .nav-item .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.sidebar .nav-item .nav-link i {
+    margin-right: 0.75rem !important;
+    font-size: 1rem !important;
+    width: 20px !important;
+    text-align: center !important;
+}
+
+/* Hover State */
+.sidebar .nav-item .nav-link:hover {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    transform: translateX(5px) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Active State */
+.sidebar .nav-item.active .nav-link,
+.sidebar .nav-item .nav-link.active {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.25) !important;
+    border-left: 4px solid #ffffff !important;
+    padding-left: calc(1rem - 4px) !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Sidebar Divider */
+.sidebar-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+    margin: 0.75rem 1rem !important;
+}
+
+/* Sidebar Copyright/Footer */
+.sidebar .text-center {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 0.75rem !important;
+    padding: 1rem !important;
+}
+
+/* Scrollbar Styling untuk Sidebar */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Dark Mode Override - Tetap gunakan warna ungu/biru */
+body.dark-mode .sidebar {
+    background: linear-gradient(180deg, #5b21b6 0%, #4c1d95 50%, #3b0764 100%) !important;
+}
+
+body.dark-mode .sidebar .nav-item .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+body.dark-mode .sidebar .nav-item .nav-link:hover,
+body.dark-mode .sidebar .nav-item .nav-link.active {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Responsive - Mobile */
+@media (max-width: 767px) {
+    .sidebar {
+        transform: translateX(-100%) !important;
+    }
+    
+    body.sidebar-visible .sidebar {
+        transform: translateX(0) !important;
+    }
+}
     </style>
 
     @stack('styles')

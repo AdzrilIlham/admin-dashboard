@@ -7,10 +7,11 @@ use Illuminate\Http\Request;
 
 class SkillController extends Controller
 {
-    // Menampilkan daftar skill
+    // Menampilkan daftar skill milik user yang login
     public function index()
     {
-        $skills = Skill::all();
+        // PERBAIKAN: Filter berdasarkan user yang login
+        $skills = Skill::where('user_id', auth()->id())->get();
         
         // Hitung distribusi langsung di controller
         $distribution = [
@@ -52,9 +53,11 @@ class SkillController extends Controller
             'level' => 'required|integer|min:0|max:100',
         ]);
         
+        // PERBAIKAN: Tambahkan user_id otomatis
         Skill::create([
+            'user_id' => auth()->id(), // AUTO-ASSIGN user yang login
             'name' => $request->name,
-            'level' => (int) $request->level  // Cast ke integer
+            'level' => (int) $request->level
         ]);
         
         return redirect()->route('skills.index')->with('success', 'Skill berhasil ditambahkan!');
@@ -63,12 +66,22 @@ class SkillController extends Controller
     // Menampilkan form edit
     public function edit(Skill $skill)
     {
+        // PERBAIKAN: Pastikan user hanya bisa edit skill miliknya sendiri
+        if ($skill->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         return view('skills.edit', compact('skill'));
     }
     
     // Update skill
     public function update(Request $request, Skill $skill)
     {
+        // PERBAIKAN: Pastikan user hanya bisa update skill miliknya sendiri
+        if ($skill->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         $request->validate([
             'name' => 'required|string|max:255',
             'level' => 'required|integer|min:0|max:100',
@@ -76,7 +89,7 @@ class SkillController extends Controller
         
         $skill->update([
             'name' => $request->name,
-            'level' => (int) $request->level  // Cast ke integer
+            'level' => (int) $request->level
         ]);
         
         return redirect()->route('skills.index')->with('success', 'Skill berhasil diupdate!');
@@ -85,6 +98,11 @@ class SkillController extends Controller
     // Hapus skill
     public function destroy(Skill $skill)
     {
+        // PERBAIKAN: Pastikan user hanya bisa hapus skill miliknya sendiri
+        if ($skill->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         $skill->delete();
         return redirect()->route('skills.index')->with('success', 'Skill berhasil dihapus!');
     }

@@ -24,17 +24,18 @@
             <!-- Quick Stats -->
             <li class="nav-item d-none d-lg-block mr-3">
                 <div class="d-flex align-items-center">
+                    <!-- PERBAIKAN: Filter berdasarkan user yang login -->
                     <div class="text-center px-3 border-right">
                         <div class="text-xs text-muted">SKILLS</div>
-                        <div class="font-weight-bold text-primary">{{ \App\Models\Skill::count() }}</div>
+                        <div class="font-weight-bold text-primary">{{ \App\Models\Skill::where('user_id', auth()->id())->count() }}</div>
                     </div>
                     <div class="text-center px-3 border-right">
                         <div class="text-xs text-muted">PROJECTS</div>
-                        <div class="font-weight-bold text-success">{{ \App\Models\Project::count() }}</div>
+                        <div class="font-weight-bold text-success">{{ \App\Models\Project::where('user_id', auth()->id())->count() }}</div>
                     </div>
                     <div class="text-center px-3">
                         <div class="text-xs text-muted">VIEWS</div>
-                        <div class="font-weight-bold text-info">{{ \App\Models\Visitor::sum('visit_count') }}</div>
+                        <div class="font-weight-bold text-info">{{ $globalProfileViews }}</div>
                     </div>
                 </div>
             </li>
@@ -52,12 +53,21 @@
                             <small class="text-muted">Administrator</small>
                         </div>
                         @if(Auth::user()->avatar)
-                            <img class="img-profile rounded-circle border border-primary" 
-                                 src="{{ asset('storage/' . Auth::user()->avatar) }}"
-                                 style="width: 45px; height: 45px; object-fit: cover;">
+                            @if(str_starts_with(Auth::user()->avatar, 'http'))
+                                {{-- Avatar dari Google/URL Eksternal --}}
+                                <img class="img-profile rounded-circle border border-primary" 
+                                    src="{{ Auth::user()->avatar }}"
+                                    style="width: 45px; height: 45px; object-fit: cover;">
+                            @else
+                                {{-- Avatar dari Upload Lokal --}}
+                                <img class="img-profile rounded-circle border border-primary" 
+                                    src="{{ asset('storage/' . Auth::user()->avatar) }}"
+                                    style="width: 45px; height: 45px; object-fit: cover;">
+                            @endif
                         @else
+                            {{-- Tidak ada avatar, tampilkan inisial --}}
                             <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center border border-primary"
-                                 style="width: 45px; height: 45px; font-weight: bold; font-size: 1.1rem;">
+                                style="width: 45px; height: 45px; font-weight: bold; font-size: 1.1rem;">
                                 {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
                             </div>
                         @endif

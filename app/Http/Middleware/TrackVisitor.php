@@ -12,10 +12,19 @@ class TrackVisitor
 {
     public function handle(Request $request, Closure $next): Response
     {
+        
+        if (app()->environment('local')) {
+            return $next($request);
+        }
+
         // Skip tracking untuk admin routes
         if ($request->is('admin/*') || $request->is('dashboard*')) {
             return $next($request);
         }
+        if (!$request->is('profile')) {
+            return $next($request);
+        }
+
 
         try {
             $agent = new Agent();

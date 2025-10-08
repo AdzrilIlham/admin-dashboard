@@ -8,11 +8,12 @@ use Illuminate\Http\Request;
 class ProjectController extends Controller
 {
     /**
-     * Menampilkan semua project
+     * Menampilkan semua project milik user yang login
      */
     public function index()
     {
-        $projects = Project::all();
+        // PERBAIKAN: Filter berdasarkan user yang login
+        $projects = Project::where('user_id', auth()->id())->get();
         return view('projects.index', compact('projects'));
     }
 
@@ -42,7 +43,9 @@ class ProjectController extends Controller
             $imagePath = $request->file('image')->store('projects', 'public');
         }
 
+        // PERBAIKAN: Tambahkan user_id otomatis
         Project::create([
+            'user_id'     => auth()->id(), // AUTO-ASSIGN user yang login
             'title'       => $request->title,
             'description' => $request->description,
             'image'       => $imagePath,
@@ -59,6 +62,11 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
+        // PERBAIKAN: Pastikan user hanya bisa edit project miliknya sendiri
+        if ($project->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         return view('projects.edit', compact('project'));
     }
 
@@ -67,6 +75,11 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
+        // PERBAIKAN: Pastikan user hanya bisa update project miliknya sendiri
+        if ($project->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         $request->validate([
             'title'       => 'required',
             'description' => 'required',
@@ -99,6 +112,11 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        // PERBAIKAN: Pastikan user hanya bisa hapus project miliknya sendiri
+        if ($project->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         // Hapus gambar jika ada
         if ($project->image && \Storage::exists('public/'.$project->image)) {
             \Storage::delete('public/'.$project->image);
