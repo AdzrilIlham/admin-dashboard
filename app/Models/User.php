@@ -24,33 +24,22 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    // Jika ingin cast datetime / lain-lain:
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        // 'password' => 'hashed', // optional: aktifkan hanya jika ingin auto-hash when setting $user->password = 'plain'
+    ];
 
-    /**
-     * Relasi One-to-Many: User memiliki banyak Projects
-     */
     public function projects()
     {
         return $this->hasMany(Project::class);
     }
 
-    /**
-     * Relasi One-to-Many: User memiliki banyak Skills
-     */
     public function skills()
     {
         return $this->hasMany(Skill::class);
     }
 
-    /**
-     * Relasi One-to-Many: User memiliki banyak Visitors (jika ada)
-     */
     public function visitors()
     {
         return $this->hasMany(Visitor::class);

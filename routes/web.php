@@ -1,95 +1,105 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\SkillController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\{
+    DashboardController,
+    HomeController,
+    ProjectController,
+    SkillController,
+    Auth\SocialiteController,
+    SettingsController,
+    ProfileController
+};
 
-// ============================================
-// PUBLIC ROUTES (untuk pengunjung)
-// Middleware: TrackVisitor akan otomatis track
-// ============================================
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Terstruktur: authenticated (profile, dashboard, admin), public (about, portfolio...)
+|
+*/
 
-// Homepage
-Route::get('/', [HomeController::class, 'index'])->name('home');
-
-// About page
-Route::get('/about', [HomeController::class, 'about'])->name('about');
-
-// Portfolio/Projects (Public)
-Route::get('/portfolio', [HomeController::class, 'portfolio'])->name('portfolio');
-Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
-Route::get('/projects/{id}', [ProjectController::class, 'show'])->name('projects.show');
-
-// Filter projects
-Route::get('/projects/skill/{skillId}', [ProjectController::class, 'filterBySkill'])
-    ->name('projects.filterBySkill');
-Route::get('/projects/status/{status}', [ProjectController::class, 'filterByStatus'])
-    ->name('projects.filterByStatus');
-
-// Skills page (Public)
-Route::get('/skills', [SkillController::class, 'index'])->name('skills.index');
-Route::get('/skills/{id}', [SkillController::class, 'show'])->name('skills.show');
-
-// Search
-Route::get('/search', [HomeController::class, 'search'])->name('search');
-
-// Contact (optional)
-Route::get('/contact', function () {
-    return view('contact');
-})->name('contact');
-
-
-// ============================================
-// ADMIN ROUTES (perlu login)
-// ============================================
-
+// AUTHENTICATED ROUTES (user harus login)
 Route::middleware(['auth'])->group(function () {
-    
-    // Dashboard
+
+    // PROFILE (prefix /profile, route name profile.*)
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'index'])->name('index');                 // profile.index
+        Route::put('/update', [ProfileController::class, 'update'])->name('update');         // profile.update
+        Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update'); // profile.password.update
+        Route::post('/avatar', [ProfileController::class, 'updateAvatar'])->name('avatar.update'); // profile.avatar.update
+        Route::delete('/avatar', [ProfileController::class, 'destroyAvatar'])->name('avatar.destroy'); // profile.avatar.destroy
+    });
+
+    // DASHBOARD (user)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    
-    // Export visitors data
-    Route::get('/visitors/export', [DashboardController::class, 'exportVisitors'])
-        ->name('visitors.export');
-    
-    // Projects Management
-    Route::get('/projects', function () {
-        $projects = auth()->user()->projects()->with('skills')->latest()->get();
-        return view('admin.projects.index', compact('projects'));
-    })->name('projects.index');
-    
-    Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
-    Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
-    Route::get('/projects/{id}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
-    Route::put('/projects/{id}', [ProjectController::class, 'update'])->name('projects.update');
-    Route::delete('/projects/{id}', [ProjectController::class, 'destroy'])->name('projects.destroy');
-    
-    // Skills Management
-    Route::get('/skills', function () {
-        $skills = auth()->user()->skills()->withCount('projects')->get();
-        return view('admin.skills.index', compact('skills'));
-    })->name('skills.index');
-    
-    Route::get('/skills/create', [SkillController::class, 'create'])->name('skills.create');
-    Route::post('/skills', [SkillController::class, 'store'])->name('skills.store');
-    Route::get('/skills/{id}/edit', [SkillController::class, 'edit'])->name('skills.edit');
-    Route::put('/skills/{id}', [SkillController::class, 'update'])->name('skills.update');
-    Route::delete('/skills/{id}', [SkillController::class, 'destroy'])->name('skills.destroy');
-    
-    
-    // Settings (optional)
-    Route::get('/settings', function () {
-        return view('admin.settings');
-    })->name('settings');
+// PUBLIC ROUTES
+Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
+
+// Redirect root ke dashboard kalau sudah login, kalau belum akan diarahkan ke login (middleware auth)
+Route::get('/', function () {
+    return redirect()->route('dashboard');
+})->middleware('auth');
+
+// About / Portfolio / Projects / Skills / Search / Contact
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/portfolio', [HomeController::class, 'portfolio'])->name('portfolio');
+
+Route::prefix('projects')->name('projects.')->group(function () {
+    Route::get('/', [ProjectController::class, 'index'])->name('index');
+    Route::get('/{id}', [ProjectController::class, 'show'])->name('show');
+    Route::get('/skill/{skillId}', [ProjectController::class, 'filterBySkill'])->name('filterBySkill');
+    Route::get('/status/{status}', [ProjectController::class, 'filterByStatus'])->name('filterByStatus');
 });
 
+Route::prefix('skills')->name('skills.')->group(function () {
+    Route::get('/', [SkillController::class, 'index'])->name('index');
+    Route::get('/{id}', [SkillController::class, 'show'])->name('show');
+});
 
-// ============================================
-// AUTH ROUTES (jika menggunakan Breeze/Jetstream)
-// ============================================
-require __DIR__.'/auth.php';
+Route::get('/search', [HomeController::class, 'search'])->name('search');
+Route::view('/contact', 'contact')->name('contact');
+
+// ADMIN routes (prefix admin, but guarded by auth)
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/visitors/export', [DashboardController::class, 'exportVisitors'])->name('visitors.export');
+
+    // Admin Projects
+    Route::prefix('projects')->name('projects.')->group(function () {
+        Route::get('/', function () {
+            $projects = auth()->user()->projects()->with('skills')->latest()->get();
+            return view('admin.projects.index', compact('projects'));
+        })->name('index');
+
+        Route::get('/create', [ProjectController::class, 'create'])->name('create');
+        Route::post('/', [ProjectController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [ProjectController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [ProjectController::class, 'update'])->name('update');
+        Route::delete('/{id}', [ProjectController::class, 'destroy'])->name('destroy');
+    });
+
+    // Admin Skills
+    Route::prefix('skills')->name('skills.')->group(function () {
+        Route::get('/', function () {
+            $skills = auth()->user()->skills()->withCount('projects')->get();
+            return view('admin.skills.index', compact('skills'));
+        })->name('index');
+
+        Route::get('/create', [SkillController::class, 'create'])->name('create');
+        Route::post('/', [SkillController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [SkillController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [SkillController::class, 'update'])->name('update');
+        Route::delete('/{id}', [SkillController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::view('/settings', 'admin.settings')->name('settings');
+});
+
+// Auth routes (Breeze/Jetstream/etc)
+require __DIR__ . '/auth.php';

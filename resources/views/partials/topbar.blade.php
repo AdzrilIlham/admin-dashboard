@@ -1,11 +1,11 @@
 <!-- Topbar -->
 <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow-sm">
     <div class="container-fluid">
-        <!-- Welcome Message & Breadcrumb -->
+        <!-- Welcome Section -->
         <div class="d-flex align-items-center" style="margin-left: 10%;">
             <div>
                 <h5 class="mb-0 font-weight-bold text-gray-800">
-                    Selamat Datang, {{ Auth::user()->name }}! 👋
+                    Selamat Datang, {{ Auth::user()->name ?? 'Pengguna' }}! 👋
                 </h5>
                 <small class="text-muted">
                     <i class="fas fa-clock mr-1"></i><span id="realtime-clock"></span> WIB
@@ -13,29 +13,34 @@
             </div>
         </div>
 
-        <!-- Topbar Navbar -->
+        <!-- Topbar Right -->
         <ul class="navbar-nav ml-auto align-items-center">
-            <!-- Sidebar Toggle (Burger Menu) - Mobile -->
+
+            <!-- Sidebar Toggle (Mobile Only) -->
             <li class="nav-item d-md-none mr-2">
                 <button id="sidebarToggleTop" class="btn btn-link rounded-circle">
                     <i class="fa fa-bars"></i>
                 </button>
             </li>
+
             <!-- Quick Stats -->
             <li class="nav-item d-none d-lg-block mr-3">
                 <div class="d-flex align-items-center">
-                    <!-- PERBAIKAN: Filter berdasarkan user yang login -->
                     <div class="text-center px-3 border-right">
                         <div class="text-xs text-muted">SKILLS</div>
-                        <div class="font-weight-bold text-primary">{{ \App\Models\Skill::where('user_id', auth()->id())->count() }}</div>
+                        <div class="font-weight-bold text-primary">
+                            {{ \App\Models\Skill::where('user_id', auth()->id())->count() }}
+                        </div>
                     </div>
                     <div class="text-center px-3 border-right">
                         <div class="text-xs text-muted">PROJECTS</div>
-                        <div class="font-weight-bold text-success">{{ \App\Models\Project::where('user_id', auth()->id())->count() }}</div>
+                        <div class="font-weight-bold text-success">
+                            {{ \App\Models\Project::where('user_id', auth()->id())->count() }}
+                        </div>
                     </div>
                     <div class="text-center px-3">
                         <div class="text-xs text-muted">VIEWS</div>
-                        <div class="font-weight-bold text-info">{{ $globalProfileViews }}</div>
+                        <div class="font-weight-bold text-info">{{ $globalProfileViews ?? 0 }}</div>
                     </div>
                 </div>
             </li>
@@ -44,28 +49,29 @@
             <div class="topbar-divider d-none d-lg-block"></div>
 
             <!-- User Profile Dropdown -->
+            @if(Auth::check())
             <li class="nav-item dropdown no-arrow">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <div class="d-flex align-items-center">
                         <div class="mr-3 d-none d-lg-block text-right">
                             <span class="d-block font-weight-bold text-gray-800">{{ Auth::user()->name }}</span>
-                            <small class="text-muted">Administrator</small>
+                            <small class="text-muted">
+                                {{ ucfirst(Auth::user()->role ?? 'User') }}
+                            </small>
                         </div>
-                        @if(Auth::user()->avatar)
-                            @if(str_starts_with(Auth::user()->avatar, 'http'))
-                                {{-- Avatar dari Google/URL Eksternal --}}
-                                <img class="img-profile rounded-circle border border-primary" 
-                                    src="{{ Auth::user()->avatar }}"
-                                    style="width: 45px; height: 45px; object-fit: cover;">
-                            @else
-                                {{-- Avatar dari Upload Lokal --}}
-                                <img class="img-profile rounded-circle border border-primary" 
-                                    src="{{ asset('storage/' . Auth::user()->avatar) }}"
-                                    style="width: 45px; height: 45px; object-fit: cover;">
-                            @endif
+
+                        @php
+                            $avatar = Auth::user()->avatar;
+                            $isExternal = $avatar && str_starts_with($avatar, 'http');
+                        @endphp
+
+                        @if($avatar)
+                            <img class="img-profile rounded-circle border border-primary"
+                                src="{{ $isExternal ? $avatar : asset('storage/' . $avatar) }}"
+                                alt="Avatar"
+                                style="width: 45px; height: 45px; object-fit: cover;">
                         @else
-                            {{-- Tidak ada avatar, tampilkan inisial --}}
                             <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center border border-primary"
                                 style="width: 45px; height: 45px; font-weight: bold; font-size: 1.1rem;">
                                 {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
@@ -73,33 +79,32 @@
                         @endif
                     </div>
                 </a>
-                
-                <!-- Dropdown Menu -->
+
+                <!-- Dropdown -->
                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                     <a class="dropdown-item" href="{{ route('profile.index') }}">
-                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                        Profile
+                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Profil
                     </a>
                     <a class="dropdown-item" href="{{ route('settings') }}">
-                        <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                        Settings
+                        <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i> Pengaturan
                     </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#" onclick="event.preventDefault(); confirmLogout();">
-                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                        Logout
+                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Logout
                     </a>
                 </div>
             </li>
+            @endif
         </ul>
     </div>
 </nav>
 
-<!-- Logout Form (Hidden) -->
+<!-- Hidden Logout Form -->
 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
     @csrf
 </form>
 
+<!-- Styling -->
 <style>
 .topbar {
     height: auto !important;
@@ -113,7 +118,6 @@
 }
 
 .topbar-divider {
-    width: 0;
     border-right: 1px solid #e3e6f0;
     height: 2.375rem;
     margin: auto 1rem;
@@ -150,19 +154,19 @@
     .topbar h5 {
         font-size: 1rem;
     }
-    
     .topbar small {
         font-size: 0.75rem;
     }
 }
 </style>
 
+<!-- Script -->
 <script>
-// Real-time Clock
+// Jam Real-Time
 function updateClock() {
     const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
     const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-    
+
     const now = new Date();
     const dayName = days[now.getDay()];
     const day = String(now.getDate()).padStart(2, '0');
@@ -170,16 +174,15 @@ function updateClock() {
     const year = now.getFullYear();
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
-    
+
     const timeString = `${dayName}, ${day} ${month} ${year} - ${hours}:${minutes}`;
     document.getElementById('realtime-clock').textContent = timeString;
 }
 
-// Update clock immediately and then every second
 updateClock();
 setInterval(updateClock, 1000);
 
-// Logout Confirmation
+// Konfirmasi Logout
 function confirmLogout() {
     Swal.fire({
         title: 'Konfirmasi Logout',
