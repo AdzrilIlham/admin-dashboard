@@ -6,24 +6,29 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        // Drop tabel lama
-        Schema::dropIfExists('projects');
-        
-        // Buat ulang dengan constraint yang benar
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
+            
+            // Foreign key ke users - TAMBAHAN
+            $table->foreignId('user_id')
+                  ->constrained('users')
+                  ->cascadeOnDelete();
+            
             $table->string('title');
             $table->text('description');
             $table->string('image')->nullable();
+            $table->string('thumbnail')->nullable();
+            $table->string('icon')->nullable();
             $table->string('link')->nullable();
-            $table->enum('status', ['ongoing', 'completed', 'paused']); // ← Ini yang penting
+            $table->enum('status', ['ongoing', 'completed', 'paused'])->default('ongoing');
+            
             $table->timestamps();
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('projects');
     }

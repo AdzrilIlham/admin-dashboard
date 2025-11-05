@@ -1,109 +1,95 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SkillController;
-use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SettingsController;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\SkillController;
+use Illuminate\Support\Facades\Route;
 
-Route::put('/settings/social', [SettingsController::class, 'updateSocial'])->name('settings.social.update');
+// ============================================
+// PUBLIC ROUTES (untuk pengunjung)
+// Middleware: TrackVisitor akan otomatis track
+// ============================================
 
-Route::put('/settings/appearance', [SettingsController::class, 'updateAppearance'])->name('settings.appearance.update');
+// Homepage
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// About page
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+
+// Portfolio/Projects (Public)
+Route::get('/portfolio', [HomeController::class, 'portfolio'])->name('portfolio');
+Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
+Route::get('/projects/{id}', [ProjectController::class, 'show'])->name('projects.show');
+
+// Filter projects
+Route::get('/projects/skill/{skillId}', [ProjectController::class, 'filterBySkill'])
+    ->name('projects.filterBySkill');
+Route::get('/projects/status/{status}', [ProjectController::class, 'filterByStatus'])
+    ->name('projects.filterByStatus');
+
+// Skills page (Public)
+Route::get('/skills', [SkillController::class, 'index'])->name('skills.index');
+Route::get('/skills/{id}', [SkillController::class, 'show'])->name('skills.show');
+
+// Search
+Route::get('/search', [HomeController::class, 'search'])->name('search');
+
+// Contact (optional)
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
+
+
+// ============================================
+// ADMIN ROUTES (perlu login)
+// ============================================
 
 Route::middleware(['auth'])->group(function () {
-    // General settings
-    Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
+    
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
 
-    // Social media settings
-    Route::put('/settings/social', [SettingsController::class, 'updateSocial'])->name('settings.updateSocial');
-
-    // About me
-    Route::put('/settings/about', [SettingsController::class, 'updateAbout'])->name('settings.updateAbout');
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // Export visitors data
+    Route::get('/visitors/export', [DashboardController::class, 'exportVisitors'])
+        ->name('visitors.export');
+    
+    // Projects Management
+    Route::get('/projects', function () {
+        $projects = auth()->user()->projects()->with('skills')->latest()->get();
+        return view('admin.projects.index', compact('projects'));
+    })->name('projects.index');
+    
+    Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
+    Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
+    Route::get('/projects/{id}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
+    Route::put('/projects/{id}', [ProjectController::class, 'update'])->name('projects.update');
+    Route::delete('/projects/{id}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+    
+    // Skills Management
+    Route::get('/skills', function () {
+        $skills = auth()->user()->skills()->withCount('projects')->get();
+        return view('admin.skills.index', compact('skills'));
+    })->name('skills.index');
+    
+    Route::get('/skills/create', [SkillController::class, 'create'])->name('skills.create');
+    Route::post('/skills', [SkillController::class, 'store'])->name('skills.store');
+    Route::get('/skills/{id}/edit', [SkillController::class, 'edit'])->name('skills.edit');
+    Route::put('/skills/{id}', [SkillController::class, 'update'])->name('skills.update');
+    Route::delete('/skills/{id}', [SkillController::class, 'destroy'])->name('skills.destroy');
+    
+    
+    // Settings (optional)
+    Route::get('/settings', function () {
+        return view('admin.settings');
+    })->name('settings');
 });
 
 
-Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar.update');
-Route::delete('/profile/avatar', [ProfileController::class, 'destroyAvatar'])->name('profile.avatar.destroy');
-
-Route::get('/test-env', function () {
-    dd(env('GOOGLE_CLIENT_ID'));
-});
-
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-
-Route::get('/', function () {
-    return 'Homepage aktif';
-});
-
-Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
-Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
-
-Route::post('/email/verification-notification', [VerificationController::class, 'send'])->name('verification.send');
-
-
-
-// Login Routes
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-
-// Register Routes
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
-
-// Logout
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-// Password Reset (optional)
-Route::get('/password/reset', function() {
-    return view('auth.passwords.email');
-})->name('password.request');
-
-// Route logout
-Route::post('/logout', function () {
-    Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-    return redirect('/');
-})->name('logout');
-
-// Redirect root ke dashboard
-Route::get('/', function () {
-    return redirect()->route('dashboard');
-});
-
-// Dashboard pakai controller
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth'])
-    ->name('dashboard');
-
-// Profile Routes
-Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
-});
-
-// Settings Routes
-Route::middleware(['auth'])->group(function () {
-    Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
-    Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
-    Route::put('/settings/social', [SettingsController::class, 'updateSocial'])->name('settings.social.update');
-    Route::put('/settings/about', [SettingsController::class, 'updateAbout'])->name('settings.about.update');
-});
-
-// Skills Routes
-Route::middleware(['auth'])->group(function () {
-    Route::resource('skills', SkillController::class);
-});
-
-// Projects Routes
-Route::middleware(['auth'])->group(function () {
-    Route::resource('projects', ProjectController::class);
-});
-
-
-require __DIR__ . '/auth.php';
+// ============================================
+// AUTH ROUTES (jika menggunakan Breeze/Jetstream)
+// ============================================
+require __DIR__.'/auth.php';

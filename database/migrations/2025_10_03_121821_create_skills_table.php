@@ -6,22 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('skills', function (Blueprint $table) {
             $table->id();
-            $table->string('name');       // nama skill
-            $table->integer('level')->default(0); // level skill, misalnya 0-100
+            
+            // Foreign key ke users - PERBAIKAN
+            $table->foreignId('user_id')
+                  ->constrained('users')
+                  ->cascadeOnDelete();
+            
+            $table->string('name');
+            $table->integer('level')->default(0);
+            $table->string('icon')->nullable();
+            $table->enum('proficiency', ['beginner', 'intermediate', 'advanced', 'expert'])->default('beginner');
+            
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('skills');

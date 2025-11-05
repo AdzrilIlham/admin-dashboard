@@ -6,17 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::table('visitors', function (Blueprint $table) {
-            $table->foreignId('user_id')->nullable()->after('id');
+            $table->integer('visit_count')->default(0)->after('id');
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::table('visitors', function (Blueprint $table) {
-            $table->dropColumn('user_id');
+            $table->dropColumn('visit_count');
         });
     }
 };
