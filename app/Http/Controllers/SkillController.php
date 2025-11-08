@@ -4,106 +4,123 @@ namespace App\Http\Controllers;
 
 use App\Models\Skill;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class SkillController extends Controller
 {
-    // Menampilkan daftar skill milik user yang login
     public function index()
     {
-        // PERBAIKAN: Filter berdasarkan user yang login
-        $skills = Skill::where('user_id', auth()->id())->get();
-        
-        // Hitung distribusi langsung di controller
-        $distribution = [
-            'expert' => 0,
-            'advanced' => 0,
-            'intermediate' => 0,
-            'beginner' => 0
-        ];
-        
-        foreach ($skills as $skill) {
-            // PENTING: Cast ke integer untuk memastikan perbandingan benar
-            $level = (int) $skill->level;
+        try {
+            // Hanya ambil skills milik user yang login
+            $skills = Skill::where('user_id', Auth::id())
+                          ->orderBy('level', 'desc')
+                          ->orderBy('name')
+                          ->get();
             
-            if ($level >= 80) {
-                $distribution['expert']++;
-            } elseif ($level >= 60) {
-                $distribution['advanced']++;
-            } elseif ($level >= 40) {
-                $distribution['intermediate']++;
-            } else {
-                $distribution['beginner']++;
-            }
+            // Hitung distribusi skill berdasarkan level
+            $expertCount = Skill::where('user_id', Auth::id())
+                               ->where('level', '>=', 80)
+                               ->count();
+            $advancedCount = Skill::where('user_id', Auth::id())
+                                 ->whereBetween('level', [60, 79])
+                                 ->count();
+            $intermediateCount = Skill::where('user_id', Auth::id())
+                                     ->whereBetween('level', [40, 59])
+                                     ->count();
+            $beginnerCount = Skill::where('user_id', Auth::id())
+                                 ->where('level', '<', 40)
+                                 ->count();
+
+            return view('skills.index', compact(
+                'skills', 
+                'expertCount', 
+                'advancedCount', 
+                'intermediateCount', 
+                'beginnerCount'
+            ));
+        } catch (\Exception $e) {
+            Log::error('Error in skills index: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat data skills.');
         }
-        
-        return view('skills.index', compact('skills', 'distribution'));
     }
-    
-    // Menampilkan form tambah skill
-    public function create()
-    {
-        return view('skills.create');
-    }
-    
-    // Simpan skill baru
+
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'level' => 'required|integer|min:0|max:100',
-        ]);
-        
-        // PERBAIKAN: Tambahkan user_id otomatis
-        Skill::create([
-            'user_id' => auth()->id(), // AUTO-ASSIGN user yang login
-            'name' => $request->name,
-            'level' => (int) $request->level
-        ]);
-        
-        return redirect()->route('skills.index')->with('success', 'Skill berhasil ditambahkan!');
-    }
-    
-    // Menampilkan form edit
-    public function edit(Skill $skill)
-    {
-        // PERBAIKAN: Pastikan user hanya bisa edit skill miliknya sendiri
-        if ($skill->user_id !== auth()->id()) {
-            abort(403, 'Unauthorized action.');
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255|unique:skills,name,NULL,id,user_id,' . Auth::id(),
+                'level' => 'required|integer|min:0|max:100'
+            ]);
+
+            // Gunakan model create dengan data lengkap
+            Skill::create([
+                'name' => $validated['name'],
+                'level' => $validated['level'],
+                'user_id' => Auth::id(),
+                // proficiency akan di-set otomatis oleh model boot method
+            ]);
+
+            return redirect()->route('skills.index')
+                ->with('success', 'Skill berhasil ditambahkan!');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput();
+        } catch (\Exception $e) {
+            Log::error('Error storing skill: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat menambah skill: ' . $e->getMessage())
+                ->withInput();
         }
-        
-        return view('skills.edit', compact('skill'));
     }
-    
-    // Update skill
-    public function update(Request $request, Skill $skill)
+
+    public function update(Request $request, $id)
     {
-        // PERBAIKAN: Pastikan user hanya bisa update skill miliknya sendiri
-        if ($skill->user_id !== auth()->id()) {
-            abort(403, 'Unauthorized action.');
+        try {
+            $skill = Skill::where('user_id', Auth::id())->findOrFail($id);
+
+            $validated = $request->validate([
+                'name' => 'required|string|max:255|unique:skills,name,' . $id . ',id,user_id,' . Auth::id(),
+                'level' => 'required|integer|min:0|max:100'
+            ]);
+
+            $skill->update([
+                'name' => $validated['name'],
+                'level' => $validated['level'],
+                // proficiency akan di-update otomatis oleh model boot method
+            ]);
+
+            return redirect()->route('skills.index')
+                ->with('success', 'Skill berhasil diupdate!');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput();
+        } catch (\Exception $e) {
+            Log::error('Error updating skill: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat mengupdate skill.')
+                ->withInput();
         }
-        
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'level' => 'required|integer|min:0|max:100',
-        ]);
-        
-        $skill->update([
-            'name' => $request->name,
-            'level' => (int) $request->level
-        ]);
-        
-        return redirect()->route('skills.index')->with('success', 'Skill berhasil diupdate!');
     }
-    
-    // Hapus skill
-    public function destroy(Skill $skill)
+
+    public function destroy($id)
     {
-        // PERBAIKAN: Pastikan user hanya bisa hapus skill miliknya sendiri
-        if ($skill->user_id !== auth()->id()) {
-            abort(403, 'Unauthorized action.');
+        try {
+            $skill = Skill::where('user_id', Auth::id())->findOrFail($id);
+            $skillName = $skill->name;
+            $skill->delete();
+
+            return redirect()->route('skills.index')
+                ->with('success', "Skill '{$skillName}' berhasil dihapus!");
+
+        } catch (\Exception $e) {
+            Log::error('Error deleting skill: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat menghapus skill.');
         }
-        
-        $skill->delete();
-        return redirect()->route('skills.index')->with('success', 'Skill berhasil dihapus!');
     }
 }

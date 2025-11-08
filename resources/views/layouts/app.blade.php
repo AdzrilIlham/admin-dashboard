@@ -15,13 +15,12 @@
     <!-- SB Admin 2 CSS -->
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+    
     <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    
 
     <style>
         * {
@@ -33,13 +32,12 @@
         body {
             overflow-x: hidden;
             transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: #f8f9fc;
         }
 
         /* ============================================
-           DARK MODE STYLES - GLOBAL
+           DARK MODE STYLES
         ============================================ */
-        
-        /* Body Dark Mode */
         body.dark-mode {
             background-color: #0f0f1e !important;
             color: #e0e0e0 !important;
@@ -49,76 +47,20 @@
             background-color: #0f0f1e !important;
         }
 
-        /* Sidebar Dark Mode */
         body.dark-mode .sidebar {
             background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%) !important;
         }
 
-        body.dark-mode .sidebar-brand {
-            background-color: rgba(0, 0, 0, 0.2) !important;
-        }
-
-        body.dark-mode .sidebar .nav-item .nav-link {
-            color: #b0b0b0 !important;
-        }
-
-        body.dark-mode .sidebar .nav-item .nav-link:hover,
-        body.dark-mode .sidebar .nav-item .nav-link.active {
-            color: #ffffff !important;
-            background-color: rgba(78, 115, 223, 0.2) !important;
-        }
-
-        body.dark-mode .sidebar .sidebar-heading {
-            color: #6c757d !important;
-        }
-
-        body.dark-mode .sidebar-divider {
-            border-color: rgba(255, 255, 255, 0.1) !important;
-        }
-
-        /* Topbar Dark Mode */
         body.dark-mode .topbar {
             background-color: #1a1a2e !important;
             border-bottom: 1px solid #2d2d44 !important;
         }
 
-        body.dark-mode .topbar h5,
-        body.dark-mode .topbar .text-gray-800 {
+        body.dark-mode .navbar-light .navbar-brand,
+        body.dark-mode .navbar-light .navbar-nav .nav-link {
             color: #e0e0e0 !important;
         }
 
-        body.dark-mode .topbar small,
-        body.dark-mode .topbar .text-muted {
-            color: #b0b0b0 !important;
-        }
-
-        body.dark-mode .topbar-divider {
-            border-right-color: #374151 !important;
-        }
-
-        body.dark-mode .topbar .border-right {
-            border-right-color: #374151 !important;
-        }
-
-        body.dark-mode .dropdown-menu {
-            background-color: #2d2d44 !important;
-            border-color: #374151 !important;
-        }
-
-        body.dark-mode .dropdown-item {
-            color: #e0e0e0 !important;
-        }
-
-        body.dark-mode .dropdown-item:hover {
-            background-color: #374151 !important;
-            color: #ffffff !important;
-        }
-
-        body.dark-mode .dropdown-divider {
-            border-top-color: #374151 !important;
-        }
-
-        /* Cards Dark Mode */
         body.dark-mode .card {
             background-color: #1a1a2e !important;
             border-color: #2d2d44 !important;
@@ -128,23 +70,13 @@
         body.dark-mode .card-header {
             background-color: #16213e !important;
             border-bottom-color: #2d2d44 !important;
-        }
-
-        body.dark-mode .card-body {
-            background-color: #1a1a2e !important;
-        }
-
-        body.dark-mode .text-gray-800,
-        body.dark-mode h1, body.dark-mode h2, 
-        body.dark-mode h3, body.dark-mode h4, 
-        body.dark-mode h5, body.dark-mode h6 {
             color: #e0e0e0 !important;
         }
 
-        /* Tables Dark Mode */
         body.dark-mode .table {
             color: #e0e0e0 !important;
             border-color: #2d2d44 !important;
+            background-color: #1a1a2e !important;
         }
 
         body.dark-mode .table thead th {
@@ -153,20 +85,11 @@
             border-color: #2d2d44 !important;
         }
 
-        body.dark-mode .table tbody tr {
+        body.dark-mode .table tbody td {
             border-color: #2d2d44 !important;
+            background-color: #1a1a2e !important;
         }
 
-        body.dark-mode .table tbody tr:hover {
-            background-color: #16213e !important;
-        }
-
-        body.dark-mode .table-bordered td,
-        body.dark-mode .table-bordered th {
-            border-color: #2d2d44 !important;
-        }
-
-        /* Forms Dark Mode */
         body.dark-mode .form-control {
             background-color: #16213e !important;
             border-color: #2d2d44 !important;
@@ -174,202 +97,27 @@
         }
 
         body.dark-mode .form-control:focus {
-            background-color: #1a1a2e !important;
+            background-color: #16213e !important;
             border-color: #4e73df !important;
             color: #e0e0e0 !important;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25) !important;
         }
 
-        body.dark-mode .form-control::placeholder {
-            color: #6c757d !important;
-        }
-
-        body.dark-mode label {
-            color: #b0b0b0 !important;
-        }
-
-        /* Buttons Dark Mode */
-        body.dark-mode .btn-light {
-            background-color: #2d2d44 !important;
-            border-color: #374151 !important;
-            color: #e0e0e0 !important;
-        }
-
-        body.dark-mode .btn-light:hover {
-            background-color: #374151 !important;
-            color: #ffffff !important;
-        }
-
-        /* Alerts Dark Mode */
-        body.dark-mode .alert {
-            background-color: #16213e !important;
-            border-color: #2d2d44 !important;
-            color: #e0e0e0 !important;
-        }
-
-        body.dark-mode .alert-info {
-            background-color: #1a3a52 !important;
-            border-color: #2d5a7b !important;
-            color: #9ec5fe !important;
-        }
-
-        body.dark-mode .alert-success {
-            background-color: #1a3a2e !important;
-            border-color: #2d5a4b !important;
-            color: #75b798 !important;
-        }
-
-        body.dark-mode .alert-warning {
-            background-color: #3a321a !important;
-            border-color: #5a4b2d !important;
-            color: #ffda6a !important;
-        }
-
-        body.dark-mode .alert-danger {
-            background-color: #3a1a1a !important;
-            border-color: #5a2d2d !important;
-            color: #ea868f !important;
-        }
-
-        /* Borders Dark Mode */
-        body.dark-mode .border {
-            border-color: #2d2d44 !important;
-        }
-
-        body.dark-mode .border-bottom {
-            border-bottom-color: #2d2d44 !important;
-        }
-
-        body.dark-mode .border-top {
-            border-top-color: #2d2d44 !important;
-        }
-
-        /* Footer Dark Mode */
-        body.dark-mode .footer {
-            background-color: #1a1a2e !important;
-            border-top: 1px solid #2d2d44 !important;
-            color: #b0b0b0 !important;
-        }
-
-        /* Badge Dark Mode */
-        body.dark-mode .badge-secondary {
-            background-color: #374151 !important;
-        }
-
-        /* Progress Bar Dark Mode */
         body.dark-mode .progress {
             background-color: #2d2d44 !important;
         }
 
-        /* List Group Dark Mode */
-        body.dark-mode .list-group-item {
-            background-color: #1a1a2e !important;
+        body.dark-mode .text-muted {
+            color: #a0a0a0 !important;
+        }
+
+        body.dark-mode .border {
             border-color: #2d2d44 !important;
-            color: #e0e0e0 !important;
-        }
-
-        body.dark-mode .list-group-item:hover {
-            background-color: #16213e !important;
-        }
-
-        /* Modal Dark Mode */
-        body.dark-mode .modal-content {
-            background-color: #1a1a2e !important;
-            border-color: #2d2d44 !important;
-        }
-
-        body.dark-mode .modal-header {
-            background-color: #16213e !important;
-            border-bottom-color: #2d2d44 !important;
-        }
-
-        body.dark-mode .modal-footer {
-            border-top-color: #2d2d44 !important;
-        }
-
-        body.dark-mode .close {
-            color: #e0e0e0 !important;
         }
 
         /* ============================================
-           ORIGINAL STYLES
+           SIDEBAR STYLES
         ============================================ */
-
-        /* Sidebar Toggle Button - Hamburger Menu dengan Lingkaran */
-        .sidebar-toggle {
-            position: fixed !important;
-            top: 20px !important;
-            left: 250px !important;
-            z-index: 10001 !important;
-            background: #4e73df !important;
-            border: none !important;
-            color: white !important;
-            width: 45px !important;
-            height: 45px !important;
-            border-radius: 50% !important;
-            cursor: pointer !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
-            transition: all 0.3s ease !important;
-            pointer-events: auto !important;
-        }
-
-        .sidebar-toggle:hover {
-            background: #2e59d9 !important;
-            transform: scale(1.05) !important;
-        }
-
-        .sidebar-toggle:active {
-            transform: scale(0.95) !important;
-        }
-
-        .sidebar-toggle i {
-            font-size: 20px !important;
-            font-weight: 600 !important;
-        }
-
-        /* Hamburger Icon - Garis Tiga */
-        .hamburger-icon {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 22px;
-            height: 16px;
-        }
-
-        .hamburger-icon span {
-            display: block;
-            width: 100%;
-            height: 2.5px;
-            background-color: white;
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-
-        /* Sembunyikan toggle button bawaan SB Admin 2 di sidebar dan topbar */
-        .sidebar #sidebarToggle,
-        .sidebar .sidebar-brand .sidebar-brand-icon button,
-        .sidebar .nav-item button[data-toggle],
-        #sidebarToggleTop,
-        .topbar #sidebarToggleTop,
-        .sidebar-heading button,
-        .sidebar .sidebar-brand button,
-        .sidebar-brand-icon button,
-        .sidebar button[data-toggle="collapse"],
-        .sidebar .rounded-circle,
-        .sidebar .btn-link {
-            display: none !important;
-        }
-        
-        /* Sembunyikan elemen dengan garis tiga dan lingkaran putih di sidebar */
-        .sidebar .fa-bars,
-        .sidebar .fas.fa-bars,
-        .sidebar i.fa-bars {
-            display: none !important;
-        }
-
-        /* Sidebar Base Styles - Override SB Admin 2 */
         .sidebar {
             position: fixed !important;
             top: 0 !important;
@@ -377,20 +125,309 @@
             width: 14rem !important;
             height: 100vh !important;
             z-index: 1000 !important;
+            background: linear-gradient(180deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%) !important;
+            box-shadow: 4px 0 15px rgba(79, 70, 229, 0.3) !important;
             transition: transform 0.3s ease-in-out !important;
             overflow-y: auto !important;
             overflow-x: hidden !important;
         }
 
-        /* Content Wrapper */
+        .sidebar .sidebar-brand {
+            background-color: rgba(0, 0, 0, 0.2) !important;
+            color: #ffffff !important;
+            padding: 1.5rem 1rem !important;
+            font-weight: 700 !important;
+            font-size: 1.2rem !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+            text-align: center;
+        }
+
+        .sidebar .sidebar-heading {
+            color: rgba(255, 255, 255, 0.5) !important;
+            text-transform: uppercase !important;
+            font-size: 0.7rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 1px !important;
+            padding: 0.75rem 1rem !important;
+            margin-top: 0.5rem !important;
+        }
+
+        .sidebar .nav-item {
+            margin: 0.25rem 0.5rem !important;
+        }
+
+        .sidebar .nav-item .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            padding: 0.75rem 1rem !important;
+            border-radius: 8px !important;
+            font-size: 0.9rem !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .sidebar .nav-item .nav-link i {
+            width: 20px;
+            margin-right: 0.5rem;
+            text-align: center;
+        }
+
+        .sidebar .nav-item .nav-link:hover {
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            transform: translateX(5px) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .sidebar .nav-item.active .nav-link,
+        .sidebar .nav-item .nav-link.active {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.25) !important;
+            border-left: 4px solid #ffffff !important;
+            padding-left: calc(1rem - 4px) !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .sidebar-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+            margin: 0.75rem 1rem !important;
+        }
+
+        /* Hide default SB Admin toggle buttons */
+        .sidebar #sidebarToggle,
+        #sidebarToggleTop,
+        .sidebar .fa-bars {
+            display: none !important;
+        }
+
+        /* ============================================
+           SIDEBAR TOGGLE BUTTON
+        ============================================ */
+        .sidebar-toggle {
+            position: fixed !important;
+            top: 15px !important;
+            left: 250px !important;
+            z-index: 1001 !important;
+            background: #4e73df !important;
+            border: none !important;
+            color: white !important;
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 50% !important;
+            cursor: pointer !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3) !important;
+            transition: all 0.3s ease !important;
+            pointer-events: auto !important;
+        }
+
+        .sidebar-toggle:hover {
+            background: #2e59d9 !important;
+            transform: scale(1.05) !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4) !important;
+        }
+
+        .hamburger-icon {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 18px;
+            height: 14px;
+        }
+
+        .hamburger-icon span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: white;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* ============================================
+           CONTENT WRAPPER & MAIN CONTENT
+        ============================================ */
         #content-wrapper {
             width: 100% !important;
             margin-left: 14rem !important;
             transition: margin-left 0.3s ease-in-out !important;
             min-height: 100vh !important;
+            background-color: #f8f9fc;
         }
 
-        /* Overlay untuk Mobile */
+        body.dark-mode #content-wrapper {
+            background-color: #0f0f1e !important;
+        }
+
+        #content {
+            flex: 1 0 auto;
+            padding-top: 0 !important;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            padding: 2rem 0;
+        }
+
+        /* Page Heading */
+        .page-heading {
+            margin-bottom: 2rem;
+            padding: 0 1.5rem;
+        }
+
+        /* ============================================
+           TOPBAR STYLES
+        ============================================ */
+        .topbar {
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 0.75rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        body.dark-mode .topbar {
+            background-color: #1a1a2e;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: #4e73df !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: #5a5c69 !important;
+            font-weight: 500;
+        }
+
+        body.dark-mode .navbar-nav .nav-link {
+            color: #e0e0e0 !important;
+        }
+
+        /* ============================================
+           CARD STYLES
+        ============================================ */
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 0.5rem 2rem 0 rgba(58, 59, 69, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            border-bottom: 1px solid #e3e6f0;
+            padding: 1rem 1.5rem;
+            background-color: #ffffff;
+            border-radius: 0.5rem 0.5rem 0 0 !important;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* ============================================
+           TABLE STYLES
+        ============================================ */
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            border-bottom: 2px solid #e3e6f0;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            padding: 1rem 0.75rem;
+        }
+
+        .table tbody td {
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
+            border-color: #e3e6f0;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+
+        body.dark-mode .table-hover tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.1);
+        }
+
+        /* ============================================
+           PROGRESS BAR STYLES
+        ============================================ */
+        .progress {
+            height: 20px;
+            background-color: #eaecf4;
+            border-radius: 0.35rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #4e73df 0%, #1cc88a 100%);
+            transition: width 0.6s ease;
+            position: relative;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-text {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* ============================================
+           BUTTON STYLES
+        ============================================ */
+        .btn {
+            border-radius: 0.35rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-group-sm > .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        /* ============================================
+           BADGE STYLES
+        ============================================ */
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.35em 0.65em;
+        }
+
+        /* ============================================
+           SIDEBAR OVERLAY (Mobile)
+        ============================================ */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -398,7 +435,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
+            z-index: 999 !important;
             display: none;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -409,7 +446,10 @@
             opacity: 1 !important;
         }
 
-        /* Sidebar Hidden State - Desktop */
+        /* ============================================
+           SIDEBAR STATES
+        ============================================ */
+        /* Desktop - Sidebar Hidden */
         body.sidebar-hidden .sidebar {
             transform: translateX(-100%) !important;
         }
@@ -422,239 +462,251 @@
             left: 20px !important;
         }
 
-        /* Sidebar Visible State - Desktop */
+        /* Desktop - Sidebar Visible */
         body:not(.sidebar-hidden) .sidebar {
             transform: translateX(0) !important;
         }
 
-        body:not(.sidebar-hidden) .sidebar-toggle {
-            left: 250px !important;
-            transition: left 0.3s ease !important;
-            z-index: 10001 !important;
-        }
-        
-        /* Pastikan button selalu di atas sidebar */
-        .sidebar-toggle {
-            z-index: 10001 !important;
+        /* ============================================
+           MODAL STYLES
+        ============================================ */
+        .modal-backdrop {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            z-index: 1040 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background-color: rgba(0, 0, 0, 0.6) !important;
+            opacity: 1 !important;
+            display: block !important;
         }
 
-        /* Mobile Responsive */
-        @media (max-width: 767px) {
-            /* Sidebar default hidden di mobile */
+        .modal-content {
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #e3e6f0;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #e3e6f0;
+            padding: 1.25rem 1.5rem;
+        }
+
+        /* ============================================
+           FORM STYLES
+        ============================================ */
+        .form-control {
+            border-radius: 0.35rem;
+            border: 1px solid #d1d3e2;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        .form-range {
+            padding: 0.5rem 0;
+        }
+
+        /* ============================================
+           RESPONSIVE STYLES
+        ============================================ */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 12rem !important;
+            }
+            
+            #content-wrapper {
+                margin-left: 12rem !important;
+            }
+            
+            .sidebar-toggle {
+                left: 220px !important;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .card-body {
+                padding: 1.25rem;
+            }
+            
+            .page-heading {
+                padding: 0 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%) !important;
+                width: 16rem !important;
             }
 
             #content-wrapper {
                 margin-left: 0 !important;
             }
 
-            /* Sidebar visible di mobile */
             body.sidebar-visible .sidebar {
                 transform: translateX(0) !important;
             }
 
-            body:not(.sidebar-visible) .sidebar {
-                transform: translateX(-100%) !important;
-            }
-
-            /* Button selalu di kiri di mobile */
             .sidebar-toggle {
                 left: 20px !important;
+                top: 15px !important;
             }
 
             body.sidebar-visible .sidebar-toggle {
                 left: 20px !important;
             }
+
+            .main-content {
+                padding: 1.5rem 0;
+            }
+
+            .page-heading {
+                margin-bottom: 1.5rem;
+                padding: 0 1rem;
+            }
+
+            .card-body {
+                padding: 1rem;
+            }
+
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+
+            .btn-group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .btn-group .btn {
+                border-radius: 0.35rem !important;
+            }
         }
 
-        /* Container & General Styles */
-        .container-fluid {
-            padding: 1.5rem;
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 1rem 0;
+            }
+
+            .page-heading {
+                margin-bottom: 1rem;
+            }
+
+            .page-heading h1 {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                margin-bottom: 1rem;
+            }
+
+            .card-header {
+                padding: 0.75rem 1rem;
+            }
+
+            .card-body {
+                padding: 0.75rem;
+            }
+
+            .table thead th,
+            .table tbody td {
+                padding: 0.5rem 0.25rem;
+                font-size: 0.8rem;
+            }
+
+            .progress {
+                height: 16px;
+            }
+
+            .badge {
+                font-size: 0.7rem;
+            }
+
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+
+            .modal-content {
+                border-radius: 0.5rem;
+            }
         }
 
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        .card {
-            margin-bottom: 1.5rem;
-        }
-
-        /* Scroll to Top Button */
-        .scroll-to-top {
-            position: fixed;
-            right: 1rem;
-            bottom: 1rem;
-            display: none;
-            width: 2.75rem;
-            height: 2.75rem;
-            text-align: center;
-            color: #fff;
-            background: rgba(90, 92, 105, 0.5);
-            line-height: 46px;
-            border-radius: 0.35rem;
-            z-index: 900;
-            text-decoration: none;
-        }
-
-        .scroll-to-top:hover {
-            background: #5a5c69;
-            color: #fff;
-        }
-
-        .scroll-to-top:focus {
-            outline: none;
+        @media (max-width: 400px) {
+            .sidebar {
+                width: 14rem !important;
+            }
+            
+            .d-sm-flex {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .d-sm-flex .btn {
+                align-self: flex-start;
+            }
         }
 
         /* ============================================
-   SIDEBAR - WARNA UNGU/BIRU SEPERTI GAMBAR 1
-============================================ */
+           SCROLL TO TOP BUTTON
+        ============================================ */
+        .scroll-to-top {
+            position: fixed;
+            right: 1.5rem;
+            bottom: 1.5rem;
+            display: none;
+            width: 3rem;
+            height: 3rem;
+            text-align: center;
+            color: #fff;
+            background: rgba(78, 115, 223, 0.8);
+            line-height: 46px;
+            border-radius: 50%;
+            z-index: 900;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
 
-/* Sidebar Base - Gradient Ungu/Biru */
-.sidebar {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 14rem !important;
-    height: 100vh !important;
-    z-index: 1000 !important;
-    background: linear-gradient(180deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%) !important;
-    box-shadow: 4px 0 15px rgba(79, 70, 229, 0.3) !important;
-    transition: transform 0.3s ease-in-out !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-}
+        .scroll-to-top:hover {
+            background: #4e73df;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
 
-/* Sidebar Brand/Logo */
-.sidebar .sidebar-brand {
-    background-color: rgba(0, 0, 0, 0.2) !important;
-    color: #ffffff !important;
-    padding: 1.5rem 1rem !important;
-    font-weight: 700 !important;
-    font-size: 1.2rem !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-}
+        /* ============================================
+           UTILITY CLASSES
+        ============================================ */
+        .shadow-custom {
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+        }
 
-.sidebar .sidebar-brand-icon {
-    color: #ffffff !important;
-    font-size: 1.5rem !important;
-}
+        .border-radius-custom {
+            border-radius: 0.5rem !important;
+        }
 
-.sidebar .sidebar-brand-text {
-    color: #ffffff !important;
-    margin-left: 0.5rem !important;
-}
+        .text-primary-custom {
+            color: #4e73df !important;
+        }
 
-/* Sidebar Headings (seperti MANAGEMENT, OTHERS) */
-.sidebar .sidebar-heading {
-    color: rgba(255, 255, 255, 0.5) !important;
-    text-transform: uppercase !important;
-    font-size: 0.7rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 1px !important;
-    padding: 0.75rem 1rem !important;
-    margin-top: 0.5rem !important;
-}
-
-/* Sidebar Menu Items */
-.sidebar .nav-item {
-    margin: 0.25rem 0.5rem !important;
-}
-
-.sidebar .nav-item .nav-link {
-    color: rgba(255, 255, 255, 0.85) !important;
-    padding: 0.75rem 1rem !important;
-    border-radius: 8px !important;
-    font-size: 0.9rem !important;
-    font-weight: 500 !important;
-    transition: all 0.3s ease !important;
-    display: flex !important;
-    align-items: center !important;
-}
-
-.sidebar .nav-item .nav-link i {
-    margin-right: 0.75rem !important;
-    font-size: 1rem !important;
-    width: 20px !important;
-    text-align: center !important;
-}
-
-/* Hover State */
-.sidebar .nav-item .nav-link:hover {
-    color: #ffffff !important;
-    background-color: rgba(255, 255, 255, 0.15) !important;
-    transform: translateX(5px) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Active State */
-.sidebar .nav-item.active .nav-link,
-.sidebar .nav-item .nav-link.active {
-    color: #ffffff !important;
-    background: rgba(255, 255, 255, 0.25) !important;
-    border-left: 4px solid #ffffff !important;
-    padding-left: calc(1rem - 4px) !important;
-    font-weight: 600 !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-}
-
-/* Sidebar Divider */
-.sidebar-divider {
-    border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
-    margin: 0.75rem 1rem !important;
-}
-
-/* Sidebar Copyright/Footer */
-.sidebar .text-center {
-    color: rgba(255, 255, 255, 0.6) !important;
-    font-size: 0.75rem !important;
-    padding: 1rem !important;
-}
-
-/* Scrollbar Styling untuk Sidebar */
-.sidebar::-webkit-scrollbar {
-    width: 6px;
-}
-
-.sidebar::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 3px;
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
-}
-
-/* Dark Mode Override - Tetap gunakan warna ungu/biru */
-body.dark-mode .sidebar {
-    background: linear-gradient(180deg, #5b21b6 0%, #4c1d95 50%, #3b0764 100%) !important;
-}
-
-body.dark-mode .sidebar .nav-item .nav-link {
-    color: rgba(255, 255, 255, 0.9) !important;
-}
-
-body.dark-mode .sidebar .nav-item .nav-link:hover,
-body.dark-mode .sidebar .nav-item .nav-link.active {
-    color: #ffffff !important;
-    background-color: rgba(255, 255, 255, 0.2) !important;
-}
-
-/* Responsive - Mobile */
-@media (max-width: 767px) {
-    .sidebar {
-        transform: translateX(-100%) !important;
-    }
-    
-    body.sidebar-visible .sidebar {
-        transform: translateX(0) !important;
-    }
-}
+        .bg-gradient-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
     </style>
 
     @stack('styles')
@@ -668,7 +720,7 @@ body.dark-mode .sidebar .nav-item .nav-link.active {
         <!-- Overlay untuk Mobile -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        <!-- Toggle Button - Hamburger Menu (Di Luar Sidebar dengan Lingkaran) -->
+        <!-- Toggle Button -->
         <button class="sidebar-toggle" id="sidebarToggle" type="button">
             <div class="hamburger-icon">
                 <span></span>
@@ -692,8 +744,10 @@ body.dark-mode .sidebar .nav-item .nav-link.active {
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid">
-                    @yield('content')
+                <div class="container-fluid main-content">
+                    <div class="page-heading">
+                        @yield('content')
+                    </div>
                 </div>
                 <!-- /.container-fluid -->
 
@@ -716,17 +770,22 @@ body.dark-mode .sidebar .nav-item .nav-link.active {
     </a>
 
     <!-- jQuery -->
-    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-    
-    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- SB Admin 2 JS -->
-    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+
+    <!-- jQuery Easing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+
+    <!-- SB Admin 2 -->
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
     @if(session('success'))
     <script>
@@ -735,19 +794,21 @@ body.dark-mode .sidebar .nav-item .nav-link.active {
             title: 'Berhasil!',
             text: '{{ session('success') }}',
             showConfirmButton: false,
-            timer: 2000
+            timer: 2000,
+            position: 'top-end',
+            toast: true
         });
     </script>
     @endif
 
     <script>
-        // Vanilla JavaScript untuk Sidebar Toggle dan Dark Mode
         document.addEventListener('DOMContentLoaded', function() {
-            // ========== DARK MODE INITIALIZATION ==========
+            console.log('Dashboard Scripts Loaded');
+
+            // ========== DARK MODE ==========
             const isDarkMode = localStorage.getItem('darkMode') === 'true';
             if (isDarkMode) {
                 document.body.classList.add('dark-mode');
-                console.log('Dark mode loaded from localStorage');
             }
 
             // ========== SIDEBAR TOGGLE ==========
@@ -755,10 +816,8 @@ body.dark-mode .sidebar .nav-item .nav-link.active {
             const sidebarOverlay = document.getElementById('sidebarOverlay');
             const body = document.body;
             
-            // Function untuk cek apakah mobile
             const isMobile = () => window.innerWidth < 768;
 
-            // Set initial state saat load
             function setInitialState() {
                 if (isMobile()) {
                     body.classList.remove('sidebar-visible');
@@ -771,24 +830,20 @@ body.dark-mode .sidebar .nav-item .nav-link.active {
 
             setInitialState();
 
-            // Toggle sidebar ketika button diklik
             if (sidebarToggle) {
                 sidebarToggle.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
 
                     if (isMobile()) {
-                        // Mobile: toggle visible class
                         body.classList.toggle('sidebar-visible');
                         sidebarOverlay.classList.toggle('active');
                     } else {
-                        // Desktop: toggle hidden class
                         body.classList.toggle('sidebar-hidden');
                     }
                 });
             }
 
-            // Close sidebar ketika overlay diklik (mobile)
             if (sidebarOverlay) {
                 sidebarOverlay.addEventListener('click', function() {
                     body.classList.remove('sidebar-visible');
@@ -796,7 +851,6 @@ body.dark-mode .sidebar .nav-item .nav-link.active {
                 });
             }
 
-            // Close sidebar ketika link diklik (mobile)
             const sidebarLinks = document.querySelectorAll('.sidebar a');
             sidebarLinks.forEach(link => {
                 link.addEventListener('click', function() {
@@ -807,7 +861,6 @@ body.dark-mode .sidebar .nav-item .nav-link.active {
                 });
             });
 
-            // Handle window resize
             let resizeTimer;
             window.addEventListener('resize', function() {
                 clearTimeout(resizeTimer);
@@ -824,7 +877,7 @@ body.dark-mode .sidebar .nav-item .nav-link.active {
                 }, 250);
             });
 
-            // Scroll to top button functionality
+            // ========== SCROLL TO TOP ==========
             const scrollToTop = document.querySelector('.scroll-to-top');
             
             window.addEventListener('scroll', function() {
@@ -846,11 +899,145 @@ body.dark-mode .sidebar .nav-item .nav-link.active {
                     });
                 });
             }
-        });
-    </script>
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+            // ========== CARD HOVER EFFECTS ==========
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // ========== RESPONSIVE TABLE ==========
+            function adjustTableLayout() {
+                const tables = document.querySelectorAll('.table-responsive');
+                tables.forEach(table => {
+                    if (window.innerWidth < 576) {
+                        table.classList.add('small-table');
+                    } else {
+                        table.classList.remove('small-table');
+                    }
+                });
+            }
+
+            adjustTableLayout();
+            window.addEventListener('resize', adjustTableLayout);
+
+            // ========== MODAL FIX ==========
+            const modals = document.querySelectorAll('.modal');
+            
+            modals.forEach(modal => {
+                modal.addEventListener('show.bs.modal', function(e) {
+                    console.log('Modal opening:', this.id);
+                    
+                    const sidebarOverlay = document.getElementById('sidebarOverlay');
+                    if (sidebarOverlay) {
+                        sidebarOverlay.style.display = 'none';
+                    }
+                    
+                    setTimeout(() => {
+                        const backdrop = document.querySelector('.modal-backdrop');
+                        if (backdrop) {
+                            backdrop.style.zIndex = '1040';
+                            backdrop.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+                            backdrop.style.opacity = '1';
+                            backdrop.style.display = 'block';
+                        }
+                        
+                        this.style.zIndex = '1055';
+                        
+                        const sidebar = document.querySelector('.sidebar');
+                        const sidebarToggle = document.querySelector('.sidebar-toggle');
+                        
+                        if (sidebar) sidebar.style.zIndex = '1000';
+                        if (sidebarToggle) sidebarToggle.style.zIndex = '1000';
+                    }, 50);
+                });
+                
+                modal.addEventListener('shown.bs.modal', function(e) {
+                    const formElements = this.querySelectorAll('input, select, textarea, button, .btn');
+                    formElements.forEach(el => {
+                        el.style.pointerEvents = 'auto';
+                    });
+                    
+                    const firstInput = this.querySelector('input:not([type="hidden"])');
+                    if (firstInput) {
+                        firstInput.focus();
+                    }
+                });
+                
+                modal.addEventListener('hidden.bs.modal', function(e) {
+                    const sidebar = document.querySelector('.sidebar');
+                    const sidebarToggle = document.querySelector('.sidebar-toggle');
+                    
+                    if (sidebar) sidebar.style.zIndex = '1000';
+                    if (sidebarToggle) sidebarToggle.style.zIndex = '1001';
+                    
+                    const sidebarOverlay = document.getElementById('sidebarOverlay');
+                    if (sidebarOverlay && document.body.classList.contains('sidebar-visible')) {
+                        sidebarOverlay.style.display = 'block';
+                    }
+                });
+            });
+
+            // Fix existing backdrop
+            const existingBackdrop = document.querySelector('.modal-backdrop');
+            if (existingBackdrop) {
+                existingBackdrop.style.zIndex = '1040';
+                existingBackdrop.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+                existingBackdrop.style.opacity = '1';
+            }
+
+            // Pastikan backdrop tidak transparan
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal-backdrop')) {
+                    e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+                    e.target.style.opacity = '1';
+                }
+            });
+
+            // ========== AUTO-HIDE ALERTS ==========
+            const autoHideAlerts = document.querySelectorAll('.alert-auto-hide');
+            autoHideAlerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 300);
+                }, 5000);
+            });
+        });
+
+        // jQuery Modal Fix (Alternative)
+        if (typeof jQuery !== 'undefined') {
+            $(document).ready(function() {
+                $('.modal').on('show.bs.modal', function() {
+                    $('.sidebar, .sidebar-toggle').css('z-index', '1000');
+                    $('#sidebarOverlay').hide();
+                });
+                
+                $('.modal').on('shown.bs.modal', function() {
+                    setTimeout(function() {
+                        $('.modal-backdrop').css({
+                            'z-index': '1040',
+                            'background-color': 'rgba(0, 0, 0, 0.6)',
+                            'opacity': '1',
+                            'display': 'block'
+                        });
+                    }, 50);
+                });
+                
+                $('.modal').on('hidden.bs.modal', function() {
+                    $('.sidebar').css('z-index', '1000');
+                    $('.sidebar-toggle').css('z-index', '1001');
+                });
+            });
+        }
+    </script>
 
     @stack('scripts')
 

@@ -4,39 +4,81 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 
 class Skill extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
         'name',
-        'level',
+        'level', 
+        'user_id',
         'icon',
-        'proficiency',
+        'proficiency'
     ];
 
-    protected $casts = [
-        'level' => 'integer',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
+    protected static function boot()
+    {
+        parent::boot();
 
-    /**
-     * Relasi Many-to-One: Skill dimiliki oleh satu User
-     */
-    public function user()
+        // Auto-assign user_id ketika membuat skill baru
+        static::creating(function ($skill) {
+            if (Auth::check() && empty($skill->user_id)) {
+                $skill->user_id = Auth::id();
+            }
+            
+            // Auto-set proficiency berdasarkan level
+            if (empty($skill->proficiency)) {
+                $skill->proficiency = $skill->getProficiencyLevel($skill->level);
+            }
+        });
+
+        // Auto-update proficiency ketika level berubah
+        static::updating(function ($skill) {
+            if ($skill->isDirty('level')) {
+                $skill->proficiency = $skill->getProficiencyLevel($skill->level);
+            }
+        });
+    }
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Relasi Many-to-Many: Skill digunakan di banyak Projects
-     */
-    public function projects()
+    public function getProficiencyLevel($level = null)
     {
-        return $this->belongsToMany(Project::class, 'project_skill')
-                    ->withTimestamps();
+        $level = $level ?: $this->level;
+        
+        if ($level >= 80) return 'expert';
+        if ($level >= 60) return 'advanced';
+        if ($level >= 40) return 'intermediate';
+        return 'beginner';
+    }
+
+    public function getCategoryName()
+    {
+        return ucfirst($this->proficiency);
+    }
+
+    public function getCategoryClass()
+    {
+        switch ($this->proficiency) {
+            case 'expert': return 'primary';
+            case 'advanced': return 'success';
+            case 'intermediate': return 'info';
+            case 'beginner': return 'warning';
+            default: return 'secondary';
+        }
+    }
+
+    /**
+     * Scope a query to only include skills for the current user.
+     */
+    public function scopeForCurrentUser($query)
+    {
+        return $query->where('user_id', Auth::id());
     }
 }
