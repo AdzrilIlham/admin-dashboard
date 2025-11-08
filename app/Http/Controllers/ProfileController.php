@@ -11,7 +11,7 @@ use Illuminate\Validation\Rules\Password;
 class ProfileController extends Controller
 {
     /**
-     * Show profile page.
+     * Tampilkan halaman profil pengguna.
      */
     public function index()
     {
@@ -20,7 +20,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update name & email.
+     * Update nama & email pengguna.
      */
     public function update(Request $request)
     {
@@ -37,40 +37,40 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update password.
-     * Expect PUT request to route profile.password.update
+     * Update password pengguna.
      */
     public function updatePassword(Request $request)
     {
         $user = Auth::user();
 
+        // ✅ Sesuaikan nama field dengan form di Blade
         $validated = $request->validate([
             'current_password' => ['required'],
-            'new_password'     => ['required', 'confirmed', Password::min(8)],
+            'password'         => ['required', 'confirmed', Password::min(8)],
         ]);
 
-        // Periksa kecocokan password lama
-        if (! Hash::check($validated['current_password'], $user->password)) {
+        // Periksa apakah password lama benar
+        if (!Hash::check($validated['current_password'], $user->password)) {
             return back()->withErrors(['current_password' => 'Password lama tidak sesuai.']);
         }
 
-        // Jangan izinkan new password sama persis dg old password
-        if (Hash::check($validated['new_password'], $user->password)) {
-            return back()->withErrors(['new_password' => 'Password baru tidak boleh sama dengan password lama.']);
+        // Jangan izinkan password baru sama dengan password lama
+        if (Hash::check($validated['password'], $user->password)) {
+            return back()->withErrors(['password' => 'Password baru tidak boleh sama dengan password lama.']);
         }
 
-        // Update password (hash otomatis lewat Hash::make)
-        $user->password = Hash::make($validated['new_password']);
+        // Hash dan simpan password baru
+        $user->password = Hash::make($validated['password']);
         $user->save();
 
-        // Logout user agar login ulang pakai password baru
+        // Logout agar pengguna harus login ulang
         Auth::logout();
 
         return redirect()->route('login')->with('success', 'Password berhasil diperbarui. Silakan login dengan password baru.');
     }
 
     /**
-     * Update avatar (POST)
+     * Update avatar pengguna.
      */
     public function updateAvatar(Request $request)
     {
@@ -85,6 +85,7 @@ class ProfileController extends Controller
             Storage::disk('public')->delete($user->avatar);
         }
 
+        // Simpan avatar baru
         $path = $request->file('avatar')->store('avatars', 'public');
 
         $user->update(['avatar' => $path]);
@@ -93,7 +94,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Delete avatar (DELETE - returns JSON)
+     * Hapus avatar pengguna.
      */
     public function destroyAvatar()
     {
