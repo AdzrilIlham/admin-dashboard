@@ -26,7 +26,7 @@
     <!-- Modal Tambah Project -->
     <div class="modal fade" id="addProjectModal" tabindex="-1" aria-labelledby="addProjectModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <form action="{{ route('projects.store') }}" method="POST" enctype="multipart/form-data" class="modal-content">
+            <form action="{{ route('admin.projects.store') }}" method="POST" enctype="multipart/form-data" class="modal-content">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="addProjectModalLabel">Tambah Project Baru</h5>
@@ -286,9 +286,9 @@
                                 </div>
                                 
                                 <form id="delete-form-{{ $project->id }}" 
-                                      action="{{ route('projects.destroy', $project) }}" 
-                                      method="POST" 
-                                      class="d-none">
+                                    action="{{ route('admin.projects.destroy', $project->id) }}" 
+                                    method="POST" 
+                                    class="d-none">
                                     @csrf
                                     @method('DELETE')
                                 </form>
@@ -397,7 +397,7 @@
             
             // Update form action URL
             const form = document.getElementById('editProjectForm');
-            form.action = `/projects/${id}`;
+            form.action = `/admin/projects/${id}`;
             
             // Fill form fields
             document.getElementById('edit_project_title').value = title;

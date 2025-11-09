@@ -214,7 +214,7 @@
                 <h5 class="modal-title" id="addSkillModalLabel">Tambah Skill Baru</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="addSkillForm" action="{{ route('skills.store') }}" method="POST">
+            <form id="addSkillForm" action="{{ route('admin.skills.store') }}" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
@@ -610,7 +610,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Set form action
-            document.getElementById('editSkillForm').action = `/skills/${id}`;
+            document.getElementById('editSkillForm').action = `/admin/skills/${id}`;
 
             // Show modal
             const editModal = new bootstrap.Modal(document.getElementById('editSkillModal'));
@@ -626,7 +626,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const name = this.getAttribute('data-name');
 
             document.getElementById('delete_skill_name').textContent = name;
-            document.getElementById('deleteSkillForm').action = `/skills/${id}`;
+            document.getElementById('deleteSkillForm').action = `/admin/skills/${id}`;
 
             const deleteModal = new bootstrap.Modal(document.getElementById('deleteSkillModal'));
             deleteModal.show();

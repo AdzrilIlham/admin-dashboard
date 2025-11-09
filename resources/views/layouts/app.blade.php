@@ -800,7 +800,7 @@
             text: '{{ session('success') }}',
             showConfirmButton: false,
             timer: 2000,
-            position: 'top-end',
+            position: 'top',
             toast: true
         });
     </script>
