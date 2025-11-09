@@ -198,7 +198,12 @@
         /* Hide default SB Admin toggle buttons */
         .sidebar #sidebarToggle,
         #sidebarToggleTop,
-        .sidebar .fa-bars {
+        .sidebar .fa-bars,
+        .sidebar .sidebar-toggler,
+        .sidebar .text-center button,
+        .sidebar-brand-icon .fa-bars,
+        .sidebar button[id*="toggle"],
+        .sidebar .rounded-circle {
             display: none !important;
         }
 

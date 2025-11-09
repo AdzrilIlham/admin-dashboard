@@ -107,20 +107,17 @@ class SkillController extends Controller
         }
     }
 
-    public function destroy($id)
-    {
-        try {
-            $skill = Skill::where('user_id', Auth::id())->findOrFail($id);
-            $skillName = $skill->name;
-            $skill->delete();
-
-            return redirect()->route('skills.index')
-                ->with('success', "Skill '{$skillName}' berhasil dihapus!");
-
-        } catch (\Exception $e) {
-            Log::error('Error deleting skill: ' . $e->getMessage());
-            return redirect()->back()
-                ->with('error', 'Terjadi kesalahan saat menghapus skill.');
-        }
-    }
+    // SkillController.php - method destroy
+public function destroy($id)
+{
+    $skill = Skill::findOrFail($id);
+    $skillName = $skill->name;
+    $skill->delete();
+    
+    return redirect()->route('skills.index')
+        ->with('success', 'Skill berhasil dihapus!'); // Simple!
+    
+    // Atau dengan nama skill tanpa tanda petik:
+    // ->with('success', "Skill {$skillName} berhasil dihapus!");
+}
 }

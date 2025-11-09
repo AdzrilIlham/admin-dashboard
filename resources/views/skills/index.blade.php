@@ -13,16 +13,27 @@
     </div>
 
     <!-- Delete Notification -->
-    @if(session('success'))
-    <div class="notification-overlay">
-        <div class="notification-center">
-            <div class="alert alert-success notification-alert">
-                <i class="fas fa-check-circle me-2"></i>
-                {{ session('success') }}
-            </div>
-        </div>
-    </div>
-    @endif
+    <!-- Success Notification dengan SweetAlert2 -->
+@if(session('success'))
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+    });
+</script>
+@endif
 
     <!-- Content Row -->
     <div class="row">
@@ -64,11 +75,21 @@
                                         <div class="d-flex align-items-center">
                                             <div class="progress flex-grow-1 me-3" style="height: 20px;">
                                                 <div class="progress-bar {{ $skill->getCategoryClass() }}" 
-                                                     role="progressbar" 
-                                                     style="width: {{ $skill->level }}%;" 
-                                                     aria-valuenow="{{ $skill->level }}" 
-                                                     aria-valuemin="0" 
-                                                     aria-valuemax="100">
+                                                    role="progressbar" 
+                                                    style="width: {{ $skill->level }}%; 
+                                                            @if($skill->level >= 80)
+                                                                background: #6366f1 !important;
+                                                            @elseif($skill->level >= 60)
+                                                                background: #10b981 !important;
+                                                            @elseif($skill->level >= 40)
+                                                                background: #0ea5e9 !important;
+                                                            @else
+                                                                background: #f59e0b !important;
+                                                            @endif
+                                                            background-image: none !important;" 
+                                                    aria-valuenow="{{ $skill->level }}" 
+                                                    aria-valuemin="0" 
+                                                    aria-valuemax="100">
                                                     <span class="progress-text">{{ $skill->level }}%</span>
                                                 </div>
                                             </div>
@@ -82,15 +103,15 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <div class="btn-group btn-group-sm" role="group">
-                                            <button type="button" class="btn btn-warning edit-skill" 
+                                        <div class="d-flex gap-2 justify-content-center">
+                                            <button type="button" class="btn btn-sm btn-warning edit-skill" 
                                                     data-id="{{ $skill->id }}"
                                                     data-name="{{ $skill->name }}"
                                                     data-level="{{ $skill->level }}"
                                                     title="Edit Skill">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button type="button" class="btn btn-danger delete-skill" 
+                                            <button type="button" class="btn btn-sm btn-danger delete-skill" 
                                                     data-id="{{ $skill->id }}"
                                                     data-name="{{ $skill->name }}"
                                                     title="Hapus Skill">
@@ -306,44 +327,98 @@
 <style>
 .progress {
     position: relative;
-    background-color: #eaecf4;
+    background-color: #e9ecef;
     border-radius: 10px;
-    overflow: hidden;
+    overflow: visible;
+    height: 24px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
 .progress-bar {
     position: relative;
-    transition: width 0.3s ease;
+    transition: width 0.6s ease;
     font-weight: 600;
     border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .progress-text {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: #fff;
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
-    font-weight: bold;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    font-weight: 700;
+    z-index: 2;
 }
 .nowrap {
     white-space: nowrap;
 }
 
-/* Progress Bar Colors dengan variasi yang lebih baik */
+/* ✅ WARNA SOLID - TANPA GRADIENT */
+
+/* ===== FORCE SOLID COLOR - NO GRADIENT ===== */
+
+/* Expert (80-100%) - Purple */
 .progress-bar.bg-primary {
-    background: linear-gradient(45deg, #4e73df, #2e59d9) !important;
+    background: #6366f1 !important;
+    background-color: #6366f1 !important;
+    background-image: none !important;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
 }
 
+/* Advanced (60-79%) - Green */
 .progress-bar.bg-success {
-    background: linear-gradient(45deg, #1cc88a, #17a673) !important;
+    background: #10b981 !important;
+    background-color: #10b981 !important;
+    background-image: none !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
+/* Intermediate (40-59%) - Blue */
 .progress-bar.bg-info {
-    background: linear-gradient(45deg, #36b9cc, #2c9faf) !important;
+    background: #0ea5e9 !important;
+    background-color: #0ea5e9 !important;
+    background-image: none !important;
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
 }
 
+/* Beginner (<40%) - Orange */
 .progress-bar.bg-warning {
-    background: linear-gradient(45deg, #f6c23e, #dda20a) !important;
+    background: #f59e0b !important;
+    background-color: #f59e0b !important;
+    background-image: none !important;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+    color: #fff !important;
+}
+/* Percentage di luar progress bar */
+.text-muted.nowrap {
+    font-weight: 600;
+    color: #6c757d !important;
+    font-size: 0.85rem;
+}
+
+/* Hover effect */
+.progress:hover .progress-bar {
+    filter: brightness(1.1);
+    transform: scaleY(1.05);
+    transition: all 0.3s ease;
+}
+
+/* Animation saat load */
+@keyframes progressAnimation {
+    from {
+        width: 0;
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.progress-bar {
+    animation: progressAnimation 0.8s ease-out;
 }
 
 /* Notification Styles */
@@ -430,22 +505,6 @@ body.dark-mode .bg-light {
     border-color: #2d2d44 !important;
 }
 
-/* Dark mode progress bars */
-body.dark-mode .progress-bar.bg-primary {
-    background: linear-gradient(45deg, #4e73df, #224abe) !important;
-}
-
-body.dark-mode .progress-bar.bg-success {
-    background: linear-gradient(45deg, #1cc88a, #13855c) !important;
-}
-
-body.dark-mode .progress-bar.bg-info {
-    background: linear-gradient(45deg, #36b9cc, #258391) !important;
-}
-
-body.dark-mode .progress-bar.bg-warning {
-    background: linear-gradient(45deg, #f6c23e, #b88a0a) !important;
-}
 </style>
 @endpush
 
