@@ -255,14 +255,76 @@
         <!-- Right Column -->
         <div class="col-lg-5">
             <!-- Project Chart -->
-            <div class="card shadow-sm mb-3">
-                <div class="card-header bg-white py-2">
-                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-chart-pie mr-2"></i>Project Status</h6>
-                </div>
-                <div class="card-body p-2" style="height: 200px;">
-                    <canvas id="projectChart"></canvas>
+            <!-- Project Chart Card -->
+<div class="card shadow-sm mb-3">
+    <div class="card-header bg-white py-2">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-chart-pie mr-2"></i>Project Status
+        </h6>
+    </div>
+    <div class="card-body p-3">
+        <!-- Chart -->
+        <div style="height: 200px; position: relative;">
+            <canvas id="projectChart"></canvas>
+        </div>
+        
+        <!-- Custom Legend with Numbers -->
+        <div class="chart-legend mt-3">
+            <div class="legend-item">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <span class="legend-dot bg-success"></span>
+                        <span class="legend-label">Completed</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="legend-count">{{ $completedProjects }}</span>
+                        <span class="legend-percentage text-muted">
+                            ({{ $totalProjects > 0 ? round(($completedProjects / $totalProjects) * 100) : 0 }}%)
+                        </span>
+                    </div>
                 </div>
             </div>
+            
+            <div class="legend-item">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <span class="legend-dot bg-primary"></span>
+                        <span class="legend-label">Ongoing</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="legend-count">{{ $ongoingProjects }}</span>
+                        <span class="legend-percentage text-muted">
+                            ({{ $totalProjects > 0 ? round(($ongoingProjects / $totalProjects) * 100) : 0 }}%)
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="legend-item">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <span class="legend-dot bg-warning"></span>
+                        <span class="legend-label">Paused</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="legend-count">{{ $pausedProjects }}</span>
+                        <span class="legend-percentage text-muted">
+                            ({{ $totalProjects > 0 ? round(($pausedProjects / $totalProjects) * 100) : 0 }}%)
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Total -->
+            <div class="legend-total mt-2 pt-2 border-top">
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="font-weight-bold">Total Projects</span>
+                    <span class="h6 mb-0 font-weight-bold text-primary">{{ $totalProjects }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
             <!-- Top Skills -->
             @if($topSkills && $topSkills->count() > 0)
@@ -272,19 +334,30 @@
                 </div>
                 <div class="card-body p-3">
                     @foreach($topSkills->take(4) as $skill)
-                    <div class="mb-2">
-                        <div class="d-flex justify-content-between mb-1">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
                             <small class="font-weight-bold">{{ $skill->name }}</small>
-                            <small class="text-muted">{{ $skill->level }}%</small>
+                            <span class="badge badge-sm
+                                @if($skill->level >= 80) badge-primary
+                                @elseif($skill->level >= 60) badge-success
+                                @elseif($skill->level >= 40) badge-info
+                                @else badge-warning
+                                @endif">
+                                {{ $skill->level }}%
+                            </span>
                         </div>
-                        <div class="progress" style="height: 5px;">
-                            <div class="progress-bar 
-                                @if($skill->level >= 80) bg-success
-                                @elseif($skill->level >= 60) bg-info
-                                @elseif($skill->level >= 40) bg-warning
-                                @else bg-danger
+                        <div class="progress" style="height: 8px; border-radius: 8px;">
+                            <div class="progress-bar progress-bar-level
+                                @if($skill->level >= 80) bg-primary-solid
+                                @elseif($skill->level >= 60) bg-success-solid
+                                @elseif($skill->level >= 40) bg-info-solid
+                                @else bg-warning-solid
                                 @endif" 
-                                style="width: {{ $skill->level }}%">
+                                role="progressbar"
+                                style="width: {{ $skill->level }}%; border-radius: 8px;" 
+                                aria-valuenow="{{ $skill->level }}" 
+                                aria-valuemin="0" 
+                                aria-valuemax="100">
                             </div>
                         </div>
                     </div>
@@ -384,6 +457,129 @@
 @endsection
 
 @push('styles')
+
+<style>
+/* Custom Legend Styling */
+.chart-legend {
+    padding-top: 0.5rem;
+}
+
+.legend-item {
+    padding: 8px 0;
+    transition: background-color 0.2s ease;
+    border-radius: 6px;
+    margin: 0 -8px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.legend-item:hover {
+    background-color: #f8f9fa;
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.legend-dot.bg-success {
+    background-color: #10b981 !important;
+}
+
+.legend-dot.bg-primary {
+    background-color: #6366f1 !important;
+}
+
+.legend-dot.bg-warning {
+    background-color: #f59e0b !important;
+}
+
+.legend-label {
+    font-size: 13px;
+    color: #4b5563;
+    font-weight: 500;
+}
+
+.legend-count {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-right: 4px;
+}
+
+.legend-percentage {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.legend-total {
+    padding-top: 8px;
+}
+</style>
+<style>
+    /* ===== TOP SKILLS PROGRESS BAR - SOLID COLORS ===== */
+
+/* Expert (80-100%) - Purple/Indigo */
+.progress-bar.bg-primary-solid {
+    background: #6366f1 !important;
+    background-color: #6366f1 !important;
+    background-image: none !important;
+    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+}
+
+/* Advanced (60-79%) - Green */
+.progress-bar.bg-success-solid {
+    background: #10b981 !important;
+    background-color: #10b981 !important;
+    background-image: none !important;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+}
+
+/* Intermediate (40-59%) - Blue/Cyan */
+.progress-bar.bg-info-solid {
+    background: #0ea5e9 !important;
+    background-color: #0ea5e9 !important;
+    background-image: none !important;
+    box-shadow: 0 2px 6px rgba(14, 165, 233, 0.3);
+}
+
+/* Beginner (<40%) - Orange */
+.progress-bar.bg-warning-solid {
+    background: #f59e0b !important;
+    background-color: #f59e0b !important;
+    background-image: none !important;
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+}
+
+/* Progress Bar Animation */
+.progress-bar-level {
+    transition: width 0.8s ease, box-shadow 0.3s ease;
+}
+
+.progress:hover .progress-bar-level {
+    filter: brightness(1.1);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+@keyframes progressLoad {
+    from { width: 0; opacity: 0.5; }
+    to { opacity: 1; }
+}
+
+.progress-bar-level {
+    animation: progressLoad 1s ease-out;
+}
+
+/* Badge Colors */
+.badge-primary { background-color: #6366f1 !important; }
+.badge-success { background-color: #10b981 !important; }
+.badge-info { background-color: #0ea5e9 !important; }
+.badge-warning { background-color: #f59e0b !important; color: #fff !important; }
+</style>
+
 <style>
     /* Compact Spacing */
     .container-fluid {
@@ -419,8 +615,8 @@
     .bg-warning-soft { background-color: rgba(246, 194, 62, 0.1); }
     
     .card { 
-        border-radius: 0.5rem; 
-        margin-bottom: 0 !important;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
     }
     
     .card-header {
@@ -462,29 +658,64 @@
 document.addEventListener('DOMContentLoaded', function () {
     const ctx = document.getElementById('projectChart');
     if (ctx) {
+        const completedCount = {{ $completedProjects ?? 0 }};
+        const ongoingCount = {{ $ongoingProjects ?? 0 }};
+        const pausedCount = {{ $pausedProjects ?? 0 }};
+        const totalProjects = completedCount + ongoingCount + pausedCount;
+        
         new Chart(ctx.getContext('2d'), {
             type: 'doughnut',
             data: {
                 labels: ['Completed', 'Ongoing', 'Paused'],
                 datasets: [{
-                    data: [{{ $completedProjects }}, {{ $ongoingProjects }}, {{ $pausedProjects }}],
-                    backgroundColor: ['#1cc88a', '#4e73df', '#f6c23e'],
-                    borderWidth: 0
+                    data: [completedCount, ongoingCount, pausedCount],
+                    backgroundColor: [
+                        '#10b981',  // Green - Completed (konsisten dengan success)
+                        '#6366f1',  // Indigo - Ongoing (konsisten dengan primary)
+                        '#f59e0b'   // Orange - Paused (konsisten dengan warning)
+                    ],
+                    hoverBackgroundColor: [
+                        '#059669',  // Darker on hover
+                        '#4f46e5',
+                        '#d97706'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
+                cutout: '60%',  // Lebih kecil dari 70%, segment lebih tebal
                 plugins: {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            padding: 8,
-                            font: { size: 10 },
+                            padding: 10,
+                            font: { size: 11 },
                             usePointStyle: true,
                             pointStyle: 'circle'
                         }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 10,
+                        cornerRadius: 6,
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed;
+                                const percentage = totalProjects > 0 
+                                    ? Math.round((value / totalProjects) * 100) 
+                                    : 0;
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
                     }
+                },
+                animation: {
+                    duration: 600,  // Lebih cepat, tidak terasa lag
+                    easing: 'easeOutQuart'
                 }
             }
         });
