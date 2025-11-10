@@ -23,18 +23,21 @@ class ProfileController extends Controller
      * Update nama & email pengguna.
      */
     public function update(Request $request)
-    {
-        $user = Auth::user();
-
-        $validated = $request->validate([
-            'name'  => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
-        ]);
-
-        $user->update($validated);
-
-        return redirect()->route('profile.index')->with('success', 'Profil berhasil diperbarui!');
-    }
+{
+    $user = Auth::user();
+    
+    $validated = $request->validate([
+        'name'  => ['required', 'string', 'max:255'],
+        'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+    ]);
+    
+    $user->update($validated);
+    
+    // ✅ TAMBAHKAN INI: Refresh session user
+    auth()->setUser($user->fresh());
+    
+    return redirect()->route('profile.index')->with('success', 'Profil berhasil diperbarui!');
+}
 
     /**
      * Update password pengguna.

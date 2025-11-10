@@ -101,7 +101,7 @@
             <div class="card-body">
                 <form method="POST" action="{{ route('profile.update') }}">
                     @csrf
-                    @method('PATCH')
+                    @method('PUT')
 
                     <div class="form-group">
                         <label for="name" class="font-weight-bold">

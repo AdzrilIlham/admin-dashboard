@@ -125,12 +125,7 @@
                         <div class="col-8">
                             <h6 class="text-white mb-1">
                                 <i class="fas fa-hand-sparkles mr-2"></i>
-                                @php
-                                    $hour = date('H');
-                                    if($hour < 12) echo 'Good Morning';
-                                    elseif($hour < 18) echo 'Good Afternoon';
-                                    else echo 'Good Evening';
-                                @endphp
+                                <span id="greetingText">Good Morning</span>
                             </h6>
                             <h5 class="text-white font-weight-bold mb-1">Admin!</h5>
                             <p class="text-white-50 mb-0 small">Keep building amazing things!</p>
@@ -653,6 +648,38 @@
 @endpush
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// ===== GREETING REAL-TIME =====
+function updateGreeting() {
+    const hour = new Date().getHours();
+    let greeting;
+    
+    if (hour >= 5 && hour < 12) {
+        greeting = 'Good Morning';
+    } else if (hour >= 12 && hour < 18) {
+        greeting = 'Good Afternoon';
+    } else {
+        greeting = 'Good Evening';
+    }
+    
+    const greetingElement = document.getElementById('greetingText');
+    if (greetingElement) {
+        greetingElement.textContent = greeting;
+    }
+}
+
+// Update saat halaman load
+updateGreeting();
+
+// Optional: Update setiap 1 menit
+setInterval(updateGreeting, 60000);
+
+// ===== CHART CODE (yang sudah ada) =====
+document.addEventListener('DOMContentLoaded', function () {
+    // ... kode chart yang sudah ada tetap sama ...
+});
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
