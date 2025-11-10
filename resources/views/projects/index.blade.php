@@ -209,7 +209,7 @@
                 <table class="table table-bordered table-hover">
                     <thead class="table-light">
                         <tr>
-                            <th width="5%" class="text-center">#</th>
+                            <th width="5%" class="text-center">No</th>
                             <th width="20%">Judul</th>
                             <th width="30%">Deskripsi</th>
                             <th width="10%" class="text-center">Status</th>
