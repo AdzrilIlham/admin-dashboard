@@ -55,12 +55,6 @@
             </a>
         </li>
 
-        <li class="nav-item {{ request()->is('settings') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('settings') }}">
-                <i class="bi bi-gear"></i>
-                <span>Settings</span>
-            </a>
-        </li>
     </ul>
 
     <hr class="sidebar-divider mt-auto">

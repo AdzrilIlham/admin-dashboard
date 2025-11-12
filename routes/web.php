@@ -7,7 +7,6 @@ use App\Http\Controllers\{
     ProjectController,
     SkillController,
     Auth\SocialiteController,
-    SettingsController,
     ProfileController
 };
 
@@ -48,7 +47,6 @@ Route::get('/', function () {
 })->middleware('auth');
 
 // Settings & Auth
-Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
 Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
 
@@ -108,8 +106,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('/{id}', [SkillController::class, 'destroy'])->name('destroy');
     });
 
-    // Admin Settings
-    Route::view('/settings', 'admin.settings')->name('settings');
 });
 
 // ============================================================================

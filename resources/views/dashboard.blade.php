@@ -415,10 +415,6 @@
                             </a>
                         </div>
                         <div class="col-6 pl-1">
-                            <a href="{{ route('settings') }}" class="btn btn-outline-secondary btn-block btn-sm py-2">
-                                <i class="fas fa-cog d-block mb-1"></i>
-                                <span class="small">Settings</span>
-                            </a>
                         </div>
                     </div>
                 </div>
