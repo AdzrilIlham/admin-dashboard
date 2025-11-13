@@ -9,14 +9,17 @@ use App\Http\Controllers\{
     Auth\SocialiteController,
     ProfileController
 };
+use App\Http\Controllers\Admin\PortfolioController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Terstruktur: authenticated (profile, dashboard, admin), public (about, portfolio...)
-|
+| Struktur utama:
+| - Authenticated Routes (user login)
+| - Public Routes
+| - Admin Routes (auth + admin middleware)
+|--------------------------------------------------------------------------
 */
 
 // ============================================================================
@@ -24,7 +27,7 @@ use App\Http\Controllers\{
 // ============================================================================
 Route::middleware(['auth'])->group(function () {
 
-    // Profile Routes (prefix: /profile, name: profile.*)
+    // Profile Routes
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::put('/update', [ProfileController::class, 'update'])->name('update');
@@ -33,30 +36,27 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/avatar', [ProfileController::class, 'destroyAvatar'])->name('avatar.destroy');
     });
 
-    // Dashboard (user)
+    // Dashboard (User)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 // ============================================================================
 // PUBLIC ROUTES
 // ============================================================================
+Route::get('/', fn() => redirect()->route('dashboard'))->middleware('auth');
 
-// Root redirect (ke dashboard jika sudah login)
-Route::get('/', function () {
-    return redirect()->route('dashboard');
-})->middleware('auth');
-
-// Settings & Auth
+// Auth Google
 Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
 
 // Static Pages
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/portfolio', [HomeController::class, 'portfolio'])->name('portfolio');
+Route::view('/skills', 'skills')->name('skills');
 Route::get('/search', [HomeController::class, 'search'])->name('search');
 Route::view('/contact', 'contact')->name('contact');
 
-// Public Projects Routes (view/list projects)
+// Public Projects Routes
 Route::prefix('projects')->name('projects.')->group(function () {
     Route::get('/', [ProjectController::class, 'index'])->name('index');
     Route::get('/{id}', [ProjectController::class, 'show'])->name('show');
@@ -64,28 +64,26 @@ Route::prefix('projects')->name('projects.')->group(function () {
     Route::get('/status/{status}', [ProjectController::class, 'filterByStatus'])->name('filterByStatus');
 });
 
-// Public Skills Routes (view/list skills)
+// Public Skills Routes
 Route::prefix('skills')->name('skills.')->group(function () {
     Route::get('/', [SkillController::class, 'index'])->name('index');
     Route::get('/{id}', [SkillController::class, 'show'])->name('show');
-    Route::resource('skills', SkillController::class);
 });
 
 // ============================================================================
-// ADMIN ROUTES (prefix: admin, guarded by auth)
+// ADMIN ROUTES (auth + admin middleware)
 // ============================================================================
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+
     // Admin Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/visitors/export', [DashboardController::class, 'exportVisitors'])->name('visitors.export');
 
-    // Admin Projects - CRUD Operations
+    // Admin Projects
     Route::prefix('projects')->name('projects.')->group(function () {
-        Route::get('/', function () {
-            $projects = auth()->user()->projects()->with('skills')->latest()->get();
-            return view('admin.projects.index', compact('projects'));
-        })->name('index');
+        Route::get('/', fn() => view('admin.projects.index', [
+            'projects' => auth()->user()->projects()->with('skills')->latest()->get()
+        ]))->name('index');
         Route::get('/create', [ProjectController::class, 'create'])->name('create');
         Route::post('/', [ProjectController::class, 'store'])->name('store');
         Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('edit');
@@ -93,12 +91,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('destroy');
     });
 
-    // Admin Skills - CRUD Operations
+    // Admin Skills
     Route::prefix('skills')->name('skills.')->group(function () {
-        Route::get('/', function () {
-            $skills = auth()->user()->skills()->withCount('projects')->get();
-            return view('admin.skills.index', compact('skills'));
-        })->name('index');
+        Route::get('/', fn() => view('admin.skills.index', [
+            'skills' => auth()->user()->skills()->withCount('projects')->get()
+        ]))->name('index');
         Route::get('/create', [SkillController::class, 'create'])->name('create');
         Route::post('/', [SkillController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [SkillController::class, 'edit'])->name('edit');
@@ -106,9 +103,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('/{id}', [SkillController::class, 'destroy'])->name('destroy');
     });
 
+    // Admin Portfolios (full resource controller)
+    Route::resource('portfolios', PortfolioController::class);
 });
 
 // ============================================================================
-// AUTH ROUTES (Breeze/Jetstream/etc)
+// AUTH ROUTES (Laravel Breeze/Jetstream)
 // ============================================================================
 require __DIR__ . '/auth.php';

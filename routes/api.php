@@ -4,6 +4,9 @@ use App\Http\Controllers\API\ContactController;
 use App\Http\Controllers\API\PortfolioController;
 use Illuminate\Support\Facades\Route;
 
+
+Route::get('/portfolio/projects', [PortfolioController::class, 'index']);
+
 // Portfolio API Routes (Public - No Auth Required)
 Route::prefix('portfolio')->group(function () {
     

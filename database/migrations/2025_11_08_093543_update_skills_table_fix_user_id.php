@@ -9,31 +9,53 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Untuk data yang sudah ada, set user_id ke user pertama
-        if (Schema::hasTable('skills')) {
-            $firstUserId = DB::table('users')->value('id');
-            if ($firstUserId) {
-                DB::table('skills')->whereNull('user_id')->update(['user_id' => $firstUserId]);
-            }
+        // Pastikan tabel skills & users ada
+        if (!Schema::hasTable('skills') || !Schema::hasTable('users')) {
+            return;
         }
 
-        // Ubah constraint untuk allow cascade delete
+        // Isi user_id kosong dengan user pertama
+        $firstUserId = DB::table('users')->value('id');
+        if ($firstUserId) {
+            DB::table('skills')->whereNull('user_id')->update(['user_id' => $firstUserId]);
+        }
+
+        // Cek apakah foreign key benar-benar ada
+        $fkExists = DB::select("
+            SELECT CONSTRAINT_NAME 
+            FROM information_schema.KEY_COLUMN_USAGE 
+            WHERE TABLE_NAME = 'skills' 
+            AND CONSTRAINT_NAME = 'skills_user_id_foreign'
+        ");
+
+        // Drop FK hanya jika benar-benar ada
+        if (!empty($fkExists)) {
+            DB::statement('ALTER TABLE skills DROP FOREIGN KEY skills_user_id_foreign');
+        }
+
+        // Tambahkan ulang FK dengan cascade
         Schema::table('skills', function (Blueprint $table) {
-            // Hapus foreign key constraint lama jika ada
-            $table->dropForeign(['user_id']);
-            
-            // Tambahkan foreign key constraint baru dengan cascade
             $table->foreign('user_id')
-                  ->references('id')
-                  ->on('users')
-                  ->onDelete('cascade');
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
         });
     }
 
     public function down(): void
     {
-        Schema::table('skills', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-        });
+        // Cek dulu sebelum drop FK
+        $fkExists = DB::select("
+            SELECT CONSTRAINT_NAME 
+            FROM information_schema.KEY_COLUMN_USAGE 
+            WHERE TABLE_NAME = 'skills' 
+            AND CONSTRAINT_NAME = 'skills_user_id_foreign'
+        ");
+
+        if (!empty($fkExists)) {
+            Schema::table('skills', function (Blueprint $table) {
+                $table->dropForeign(['user_id']);
+            });
+        }
     }
 };
