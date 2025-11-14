@@ -68,7 +68,6 @@ Route::prefix('projects')->name('projects.')->group(function () {
 Route::prefix('skills')->name('skills.')->group(function () {
     Route::get('/', [SkillController::class, 'index'])->name('index');
     Route::get('/{id}', [SkillController::class, 'show'])->name('show');
-    Route::resource('skills', SkillController::class);
 });
 
 // ============================================================================
