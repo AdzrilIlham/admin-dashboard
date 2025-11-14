@@ -1,29 +1,29 @@
-<?php
-
-use Illuminate\Http\Request;
+use App\Http\Controllers\API\ContactController;
+use App\Http\Controllers\API\PortfolioController;
 use Illuminate\Support\Facades\Route;
 
-// Impor Controller yang sudah Anda buat
-use App\Http\Controllers\Api\ProjectController;
-use App\Http\Controllers\Api\SkillController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+Route::get('/portfolio/projects', [PortfolioController::class, 'index']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Portfolio API Routes (Public - No Auth Required)
+Route::prefix('portfolio')->group(function () {
+ 
+    // About Me
+    Route::get('/about', [PortfolioController::class, 'aboutMe']);
+    
+    // Projects
+    Route::get('/projects', [PortfolioController::class, 'projects']);
+    Route::get('/projects/{id}', [PortfolioController::class, 'projectDetail']);
+    
+    // Skills
+    Route::get('/skills', [PortfolioController::class, 'skills']);
+    
+    // Blogs
+    Route::get('/blogs', [PortfolioController::class, 'blogs']);
+    Route::get('/blogs/{slug}', [PortfolioController::class, 'blogDetail']);
+    Route::get('/blog-categories', [PortfolioController::class, 'blogCategories']);
+    Route::get('/blogs/category/{category}', [PortfolioController::class, 'blogsByCategory']);
+    
+    // Contact
+    Route::post('/contact', [ContactController::class, 'store']);
 });
-
-// 👇 Rute untuk mengambil data Projects
-Route::get('/projects', [ProjectController::class, 'index']);
-
-// 👇 Rute untuk mengambil data Skills
-Route::get('/skills', [SkillController::class, 'index']);

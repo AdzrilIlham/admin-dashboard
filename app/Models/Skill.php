@@ -81,4 +81,11 @@ class Skill extends Model
     {
         return $query->where('user_id', Auth::id());
     }
+
+    public function projects()
+{
+    return $this->belongsToMany(Project::class, 'project_skill', 'skill_id', 'project_id')
+                ->withTimestamps();
+}
+
 }
