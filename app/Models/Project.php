@@ -37,8 +37,11 @@ class Project extends Model
      * Relasi Many-to-Many: Project menggunakan banyak Skills
      */
     public function skills()
-    {
-        return $this->belongsToMany(Skill::class, 'project_skill')
-                    ->withTimestamps();
-    }
+{
+    return $this->belongsToMany(Skill::class, 'project_skill', 'project_id', 'skill_id')
+                ->withTimestamps();
+}
+
+
+    
 }

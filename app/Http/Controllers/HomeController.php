@@ -35,14 +35,18 @@ class HomeController extends Controller
     }
 
     public function portfolio()
-    {
-        $projects = Project::with('skills')
-            ->latest()
-            ->get();
-        
-        $skills = Skill::all();
-        
-        return view('portfolio', compact('projects', 'skills'));
+{
+    // Ambil user dengan role admin (pemilik portofolio)
+    $admin = \App\Models\User::where('role', 'admin')->first();
+
+    // Jika admin ditemukan, ambil project miliknya
+    $projects = $admin
+        ? $admin->projects()->with('skills')->latest()->get()
+        : collect(); // kalau tidak ada admin, kosongkan
+
+    return view('portfolio', compact('projects'));
+
+
     }
 
     public function search(Request $request)
