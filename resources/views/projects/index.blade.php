@@ -353,37 +353,15 @@
 
 @push('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function() {
     // Auto-dismiss alerts after 5 seconds
-    document.addEventListener('DOMContentLoaded', function() {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(alert => {
-            setTimeout(() => {
-                const bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            }, 5000);
-        });
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        }, 5000);
     });
-
-    // Preview image before upload
-    function previewImage(event, previewId) {
-        const input = event.target;
-        const preview = document.getElementById(previewId);
-        preview.innerHTML = '';
-
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = 'img-thumbnail';
-                img.style.maxWidth = '200px';
-                preview.appendChild(img);
-            };
-            
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
 
     // Handle edit button click
     document.querySelectorAll('.edit-project-btn').forEach(button => {
@@ -423,29 +401,63 @@
         });
     });
 
-    // Handle delete button click
+    // Handle delete button click - DENGAN SWEETALERT2
     document.querySelectorAll('.delete-project-btn').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
             const id = this.dataset.id;
             const title = this.dataset.title;
             
-            // Show confirmation using SweetAlert2 or native confirm
-            if (confirm(`Apakah Anda yakin ingin menghapus project "${title}"?\n\nTindakan ini tidak dapat dibatalkan.`)) {
-                document.getElementById(`delete-form-${id}`).submit();
-            }
+            Swal.fire({
+                title: 'Hapus Project?',
+                html: `Project <strong>"${title}"</strong> akan dihapus permanen`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e74a3b',
+                cancelButtonColor: '#858796',
+                confirmButtonText: '<i class="fas fa-trash me-1"></i> Ya, Hapus!',
+                cancelButtonText: '<i class="fas fa-times me-1"></i> Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`delete-form-${id}`).submit();
+                }
+            });
         });
     });
-
-    // Show image in modal
-    function showImageModal(imageSrc, imageTitle) {
-        document.getElementById('modalImage').src = imageSrc;
-        document.getElementById('imageModalLabel').textContent = imageTitle;
-    }
 
     // Re-open modal if there are validation errors
     @if($errors->any())
         const addModal = new bootstrap.Modal(document.getElementById('addProjectModal'));
         addModal.show();
     @endif
+});
+
+// Preview image before upload (harus di luar DOMContentLoaded)
+function previewImage(event, previewId) {
+    const input = event.target;
+    const preview = document.getElementById(previewId);
+    preview.innerHTML = '';
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'img-thumbnail';
+            img.style.maxWidth = '200px';
+            preview.appendChild(img);
+        };
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Show image in modal (harus di luar DOMContentLoaded)
+function showImageModal(imageSrc, imageTitle) {
+    document.getElementById('modalImage').src = imageSrc;
+    document.getElementById('imageModalLabel').textContent = imageTitle;
+}
 </script>
 @endpush
