@@ -1,7 +1,7 @@
 <!-- Sidebar -->
 <nav id="sidebar" class="bg-gradient-primary sidebar sidebar-dark accordion position-fixed vh-100" style="transition: all 0.3s ease;">
     <div class="sidebar-header d-flex align-items-center justify-content-between p-3">
-        <a class="text-white fw-bold text-decoration-none fs-5" href="{{ route('dashboard') }}">
+        <a class="text-white fw-bold text-decoration-none fs-5" href="{{ route('admin.dashboard') }}">
             <i class="bi bi-speedometer2 me-2"></i> Admin Panel
         </a>
         <button id="sidebarCollapse" class="btn btn-sm btn-light text-primary rounded-circle">
@@ -12,9 +12,10 @@
     <hr class="sidebar-divider my-0">
 
     <ul class="navbar-nav" id="accordionSidebar">
+        
         <!-- Dashboard -->
-        <li class="nav-item {{ request()->is('dashboard') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('dashboard') }}">
+        <li class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.dashboard') }}">
                 <i class="bi bi-house"></i>
                 <span>Dashboard</span>
             </a>
@@ -22,31 +23,69 @@
 
         <hr class="sidebar-divider">
 
-        <!-- Heading -->
-        <div class="sidebar-heading text-uppercase text-white-50 small ps-3">Management</div>
+        <!-- Portfolio Section -->
+        <div class="sidebar-heading text-uppercase text-white-50 small ps-3">
+            Portfolio Management
+        </div>
 
-        <!-- Collapsible Menu -->
+        <!-- Portfolio Collapsible Menu -->
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseManagement" aria-expanded="true" aria-controls="collapseManagement">
-                <i class="bi bi-folder2-open"></i>
-                <span>Management</span>
+            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePortfolio"
+                aria-expanded="false" aria-controls="collapsePortfolio">
+                <i class="bi bi-folder-check"></i>
+                <span>Portfolio</span>
             </a>
-            <div id="collapseManagement" class="collapse {{ request()->is('skills*') || request()->is('projects*') ? 'show' : '' }}" data-bs-parent="#accordionSidebar">
+
+            <div id="collapsePortfolio" 
+                 class="collapse {{ request()->is('admin/portfolio*') ? 'show' : '' }}" 
+                 data-bs-parent="#accordionSidebar">
+
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item {{ request()->is('skills*') ? 'active' : '' }}" href="{{ route('skills.index') }}">
+
+                    <a class="collapse-item {{ request()->routeIs('admin.portfolio.index') ? 'active' : '' }}"
+                        href="{{ route('admin.portfolio.index') }}">
+                        <i class="bi bi-info-circle me-2"></i> About
+                    </a>
+
+                    <a class="collapse-item {{ request()->routeIs('admin.portfolio.skills.*') ? 'active' : '' }}"
+                        href="{{ route('admin.portfolio.index') }}#skills-section">
                         <i class="bi bi-code-slash me-2"></i> Skills
                     </a>
-                    <a class="collapse-item {{ request()->is('projects*') ? 'active' : '' }}" href="{{ route('projects.index') }}">
-                        <i class="bi bi-collection me-2"></i> Projects
+
+                    <a class="collapse-item {{ request()->routeIs('admin.portfolio.projects.*') ? 'active' : '' }}"
+                        href="{{ route('admin.portfolio.index') }}#projects-section">
+                        <i class="bi bi-kanban me-2"></i> Projects
                     </a>
+
+                    <a class="collapse-item {{ request()->routeIs('admin.portfolio.certificates.*') ? 'active' : '' }}"
+                        href="{{ route('admin.portfolio.index') }}#certificates-section">
+                        <i class="bi bi-award me-2"></i> Certificates
+                    </a>
+
                 </div>
             </div>
         </li>
 
         <hr class="sidebar-divider">
 
-        <!-- Others -->
-        <div class="sidebar-heading text-uppercase text-white-50 small ps-3">Others</div>
+        <!-- Inbox Section -->
+        <div class="sidebar-heading text-uppercase text-white-50 small ps-3">
+            Inbox
+        </div>
+
+        <li class="nav-item {{ request()->is('admin/contacts*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.contacts.index') }}">
+                <i class="bi bi-envelope"></i>
+                <span>Contact Inbox</span>
+            </a>
+        </li>
+
+        <hr class="sidebar-divider">
+
+        <!-- Profile -->
+        <div class="sidebar-heading text-uppercase text-white-50 small ps-3">
+            Others
+        </div>
 
         <li class="nav-item {{ request()->is('profile') ? 'active' : '' }}">
             <a class="nav-link" href="{{ url('/profile') }}">
@@ -59,6 +98,6 @@
 
     <hr class="sidebar-divider mt-auto">
     <div class="text-center small text-white-50 mb-3">
-        Copyright © Your Website 2025
+        © Your Website 2025
     </div>
 </nav>

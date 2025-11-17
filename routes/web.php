@@ -9,25 +9,22 @@ use App\Http\Controllers\{
     Auth\SocialiteController,
     ProfileController
 };
-use App\Http\Controllers\Admin\PortfolioController;
+
+use App\Http\Controllers\Admin\{
+    PortfolioController,
+    ContactController
+};
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-| Struktur utama:
-| - Authenticated Routes (user login)
-| - Public Routes
-| - Admin Routes (auth + admin middleware)
+| AUTHENTICATED USER ROUTES
 |--------------------------------------------------------------------------
 */
-
-// ============================================================================
-// AUTHENTICATED ROUTES (user harus login)
-// ============================================================================
 Route::middleware(['auth'])->group(function () {
 
-    // Profile Routes
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // User Profile Settings
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::put('/update', [ProfileController::class, 'update'])->name('update');
@@ -35,79 +32,85 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/avatar', [ProfileController::class, 'updateAvatar'])->name('avatar.update');
         Route::delete('/avatar', [ProfileController::class, 'destroyAvatar'])->name('avatar.destroy');
     });
-
-    // Dashboard (User)
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
-// ============================================================================
-// PUBLIC ROUTES
-// ============================================================================
+/*
+|--------------------------------------------------------------------------
+| PUBLIC ROUTES
+|--------------------------------------------------------------------------
+*/
 Route::get('/', fn() => redirect()->route('dashboard'))->middleware('auth');
-
-// Auth Google
-Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
-Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
-
-// Static Pages
 Route::get('/about', [HomeController::class, 'about'])->name('about');
-Route::get('/portfolio', [HomeController::class, 'portfolio'])->name('portfolio');
-Route::view('/skills', 'skills')->name('skills');
-Route::get('/search', [HomeController::class, 'search'])->name('search');
 Route::view('/contact', 'contact')->name('contact');
 
-// Public Projects Routes
+// Public Projects
 Route::prefix('projects')->name('projects.')->group(function () {
     Route::get('/', [ProjectController::class, 'index'])->name('index');
     Route::get('/{id}', [ProjectController::class, 'show'])->name('show');
-    Route::get('/skill/{skillId}', [ProjectController::class, 'filterBySkill'])->name('filterBySkill');
-    Route::get('/status/{status}', [ProjectController::class, 'filterByStatus'])->name('filterByStatus');
 });
 
-// Public Skills Routes
+// Public Skills
 Route::prefix('skills')->name('skills.')->group(function () {
     Route::get('/', [SkillController::class, 'index'])->name('index');
     Route::get('/{id}', [SkillController::class, 'show'])->name('show');
 });
 
-// ============================================================================
-// ADMIN ROUTES (auth + admin middleware)
-// ============================================================================
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+/*
+|--------------------------------------------------------------------------
+| ADMIN ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::resource('portfolios', App\Http\Controllers\Admin\PortfolioController::class);
+
 
     // Admin Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/visitors/export', [DashboardController::class, 'exportVisitors'])->name('visitors.export');
 
-    // Admin Projects
-    Route::prefix('projects')->name('projects.')->group(function () {
-        Route::get('/', fn() => view('admin.projects.index', [
-            'projects' => auth()->user()->projects()->with('skills')->latest()->get()
-        ]))->name('index');
-        Route::get('/create', [ProjectController::class, 'create'])->name('create');
-        Route::post('/', [ProjectController::class, 'store'])->name('store');
-        Route::get('/{project}/edit', [ProjectController::class, 'edit'])->name('edit');
-        Route::put('/{project}', [ProjectController::class, 'update'])->name('update');
-        Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('destroy');
+    /*
+    |--------------------------------------------------------------------------
+    | PORTFOLIO (ABOUT + SKILLS + CERTIFICATES + PROJECTS)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('portfolio')->name('portfolio.')->group(function () {
+
+        // Portfolio Overview Page
+        Route::get('/', [PortfolioController::class, 'index'])->name('index');
+
+        // ABOUT
+        Route::put('/update', [PortfolioController::class, 'updatePortfolio'])->name('update');
+
+        // SKILLS CRUD
+        Route::post('/skills/store', [PortfolioController::class, 'storeSkill'])->name('skills.store');
+        Route::put('/skills/{skill}/update', [PortfolioController::class, 'updateSkill'])->name('skills.update');
+        Route::delete('/skills/{skill}/delete', [PortfolioController::class, 'deleteSkill'])->name('skills.delete');
+
+        // CERTIFICATES CRUD
+        Route::post('/certificates/store', [PortfolioController::class, 'storeCertificate'])->name('certificates.store');
+        Route::put('/certificates/{certificate}/update', [PortfolioController::class, 'updateCertificate'])->name('certificates.update');
+        Route::delete('/certificates/{certificate}/delete', [PortfolioController::class, 'deleteCertificate'])->name('certificates.delete');
+
+        // PROJECTS CRUD
+        Route::post('/projects/store', [PortfolioController::class, 'storeProject'])->name('projects.store');
+        Route::put('/projects/{project}/update', [PortfolioController::class, 'updateProject'])->name('projects.update');
+        Route::delete('/projects/{project}/delete', [PortfolioController::class, 'deleteProject'])->name('projects.delete');
     });
 
-    // Admin Skills
-    Route::prefix('skills')->name('skills.')->group(function () {
-        Route::get('/', fn() => view('admin.skills.index', [
-            'skills' => auth()->user()->skills()->withCount('projects')->get()
-        ]))->name('index');
-        Route::get('/create', [SkillController::class, 'create'])->name('create');
-        Route::post('/', [SkillController::class, 'store'])->name('store');
-        Route::get('/{id}/edit', [SkillController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [SkillController::class, 'update'])->name('update');
-        Route::delete('/{id}', [SkillController::class, 'destroy'])->name('destroy');
-    });
-
-    // Admin Portfolios (full resource controller)
-    Route::resource('portfolios', PortfolioController::class);
+    /*
+    |--------------------------------------------------------------------------
+    | CONTACT / INBOX (Admin Reply to User Messages)
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('contacts', ContactController::class);
+    Route::post('/contacts/{id}/reply', [ContactController::class, 'reply'])->name('contacts.reply');
 });
 
-// ============================================================================
-// AUTH ROUTES (Laravel Breeze/Jetstream)
-// ============================================================================
+/*
+|--------------------------------------------------------------------------
+| AUTH ROUTES (Breeze / Jetstream)
+|--------------------------------------------------------------------------
+*/
 require __DIR__ . '/auth.php';

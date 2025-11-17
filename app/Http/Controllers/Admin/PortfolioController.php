@@ -3,163 +3,199 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\AboutMeResource;
-use App\Http\Resources\BlogResource;
-use App\Models\AboutMe;
-use App\Models\Blog;
-use App\Models\Project;
-use App\Models\Skill;
 use Illuminate\Http\Request;
+use App\Models\Portfolio;
+use App\Models\Skill;
+use App\Models\Certificate;
+use App\Models\Project;
+use Illuminate\Support\Facades\Storage;
 
 class PortfolioController extends Controller
 {
     /**
-     * Get About Me data.
+     * Show Portfolio Page
      */
-    public function aboutMe()
+    public function index()
     {
-        $aboutMe = AboutMe::first();
+        $portfolio = Portfolio::first(); // About
+        $skills = Skill::latest()->get();
+        $certificates = Certificate::latest()->get();
+        $projects = Project::latest()->get();
 
-        if (!$aboutMe) {
-            return response()->json([
-                'success' => false,
-                'message' => 'About Me data not found',
-            ], 404);
+        return view('admin.portfolio.index', compact(
+            'portfolio',
+            'skills',
+            'certificates',
+            'projects'
+        ));
+    }
+
+    /**
+     * Update ABOUT section (single record)
+     */
+    public function updatePortfolio(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string'
+        ]);
+
+        $portfolio = Portfolio::first();
+
+        if (!$portfolio) {
+            $portfolio = new Portfolio();
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => new AboutMeResource($aboutMe),
-        ]);
+        $portfolio->title = $request->title;
+        $portfolio->description = $request->description;
+        $portfolio->save();
+
+        return back()->with('success', 'About updated successfully.');
     }
 
-    /**
-     * Get all projects.
-     */
-    public function projects()
-    {
-        $projects = Project::orderBy('created_at', 'desc')->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => $projects,
+    /* ================================================================
+       SKILLS CRUD
+    ================================================================= */
+
+    public function storeSkill(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'icon' => 'required',
+            'level' => 'required|numeric|min:1|max:100'
         ]);
+
+        Skill::create($request->only('name', 'icon', 'level'));
+
+        return back()->with('success', 'Skill added successfully.');
     }
 
-    /**
-     * Get single project by ID.
-     */
-    public function projectDetail($id)
+    public function updateSkill(Request $request, Skill $skill)
     {
-        $project = Project::find($id);
+        $request->validate([
+            'name' => 'required',
+            'icon' => 'required',
+            'level' => 'required|numeric|min:1|max:100'
+        ]);
 
-        if (!$project) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Project not found',
-            ], 404);
+        $skill->update($request->only('name', 'icon', 'level'));
+
+        return back()->with('success', 'Skill updated successfully.');
+    }
+
+    public function deleteSkill(Skill $skill)
+    {
+        $skill->delete();
+
+        return back()->with('success', 'Skill deleted.');
+    }
+
+
+    /* ================================================================
+       CERTIFICATES CRUD
+    ================================================================= */
+
+    public function storeCertificate(Request $request)
+    {
+        $request->validate([
+            'title' => 'required',
+            'image' => 'required|image|max:2048',
+        ]);
+
+        $path = $request->file('image')->store('certificates', 'public');
+
+        Certificate::create([
+            'title' => $request->title,
+            'image' => $path
+        ]);
+
+        return back()->with('success', 'Certificate added.');
+    }
+
+    public function updateCertificate(Request $request, Certificate $certificate)
+    {
+        $request->validate([
+            'title' => 'required',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        $data = ['title' => $request->title];
+
+        if ($request->hasFile('image')) {
+            // delete old
+            Storage::disk('public')->delete($certificate->image);
+            // store new
+            $data['image'] = $request->file('image')->store('certificates', 'public');
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => $project,
-        ]);
+        $certificate->update($data);
+
+        return back()->with('success', 'Certificate updated.');
     }
 
-    /**
-     * Get all skills.
-     */
-    public function skills()
+    public function deleteCertificate(Certificate $certificate)
     {
-        $skills = Skill::orderBy('created_at', 'desc')->get();
+        Storage::disk('public')->delete($certificate->image);
+        $certificate->delete();
 
-        return response()->json([
-            'success' => true,
-            'data' => $skills,
-        ]);
+        return back()->with('success', 'Certificate deleted.');
     }
 
-    /**
-     * Get all published blogs.
-     */
-    public function blogs()
-    {
-        $blogs = Blog::published()
-            ->latest()
-            ->paginate(9);
 
-        return response()->json([
-            'success' => true,
-            'data' => BlogResource::collection($blogs),
-            'meta' => [
-                'current_page' => $blogs->currentPage(),
-                'last_page' => $blogs->lastPage(),
-                'per_page' => $blogs->perPage(),
-                'total' => $blogs->total(),
-            ],
+    /* ================================================================
+       PROJECTS CRUD
+    ================================================================= */
+
+    public function storeProject(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'url' => 'required',
+            'thumbnail' => 'required|image|max:2048',
         ]);
+
+        $path = $request->file('thumbnail')->store('projects', 'public');
+
+        Project::create([
+            'name' => $request->name,
+            'url' => $request->url,
+            'thumbnail' => $path
+        ]);
+
+        return back()->with('success', 'Project added.');
     }
 
-    /**
-     * Get single blog by slug.
-     */
-    public function blogDetail($slug)
+    public function updateProject(Request $request, Project $project)
     {
-        $blog = Blog::where('slug', $slug)
-            ->published()
-            ->first();
+        $request->validate([
+            'name' => 'required',
+            'url' => 'required',
+            'thumbnail' => 'nullable|image|max:2048',
+        ]);
 
-        if (!$blog) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Blog post not found',
-            ], 404);
+        $data = [
+            'name' => $request->name,
+            'url' => $request->url
+        ];
+
+        if ($request->hasFile('thumbnail')) {
+            Storage::disk('public')->delete($project->thumbnail);
+
+            $data['thumbnail'] = $request->file('thumbnail')->store('projects', 'public');
         }
 
-        // Increment views
-        $blog->incrementViews();
+        $project->update($data);
 
-        return response()->json([
-            'success' => true,
-            'data' => new BlogResource($blog),
-        ]);
+        return back()->with('success', 'Project updated.');
     }
 
-    /**
-     * Get blog categories.
-     */
-    public function blogCategories()
+    public function deleteProject(Project $project)
     {
-        $categories = Blog::published()
-            ->whereNotNull('category')
-            ->distinct()
-            ->pluck('category');
+        Storage::disk('public')->delete($project->thumbnail);
 
-        return response()->json([
-            'success' => true,
-            'data' => $categories,
-        ]);
-    }
+        $project->delete();
 
-    /**
-     * Get blogs by category.
-     */
-    public function blogsByCategory($category)
-    {
-        $blogs = Blog::published()
-            ->where('category', $category)
-            ->latest()
-            ->paginate(9);
-
-        return response()->json([
-            'success' => true,
-            'data' => BlogResource::collection($blogs),
-            'meta' => [
-                'current_page' => $blogs->currentPage(),
-                'last_page' => $blogs->lastPage(),
-                'per_page' => $blogs->perPage(),
-                'total' => $blogs->total(),
-            ],
-        ]);
+        return back()->with('success', 'Project deleted.');
     }
 }
